@@ -40,6 +40,8 @@ export default function EditorClient({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [isAutoSaving, setIsAutoSaving] = useState(false);
+  const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
 
   const editor = useEditor({
     extensions: [
@@ -53,6 +55,7 @@ export default function EditorClient({
 
   const html = useMemo(() => editor?.getHTML() ?? "", [editor, editor?.state]);
   const computedSlug = useMemo(() => (title ? slugify(title) : initialSlug || ""), [title, initialSlug]);
+  const draftKey = useMemo(() => (initialSlug ? `editor-draft-${initialSlug}` : "editor-draft-new"), [initialSlug]);
 
   // Autosave draft on changes (debounced)
   const [autoTimer, setAutoTimer] = useState<NodeJS.Timeout | null>(null);
@@ -60,6 +63,7 @@ export default function EditorClient({
 
   const onSaveDraft = useCallback(async () => {
     if (!title || !editor) return;
+    setIsAutoSaving(true);
     try {
       let res: Response;
       if ((mode === "edit" || initialSlug) && initialSlug) {
@@ -75,9 +79,17 @@ export default function EditorClient({
           body: JSON.stringify({ title, slug: computedSlug, html: editor.getHTML(), status: "draft" }),
         });
       }
-      if (!res.ok) return; // silent on autosave
+      if (typeof window !== "undefined") {
+        try {
+          localStorage.setItem(draftKey, JSON.stringify({ title, html: editor.getHTML() }));
+        } catch {}
+      }
+      if (res.ok) setLastSavedAt(new Date().toISOString());
     } catch {}
-  }, [title, computedSlug, editor, mode, initialSlug]);
+    finally {
+      setIsAutoSaving(false);
+    }
+  }, [title, computedSlug, editor, mode, initialSlug, draftKey]);
 
   const scheduleAutosave = useCallback(() => {
     if (!title || !editor) return;
@@ -87,6 +99,21 @@ export default function EditorClient({
     }, 1500);
     setAutoTimer(t as any);
   }, [title, editor, autoTimer, onSaveDraft]);
+
+  // Load any locally saved draft on mount/editor ready
+  useEffect(() => {
+    if (!editor) return;
+    if (typeof window === "undefined") return;
+    try {
+      const raw = localStorage.getItem(draftKey);
+      if (raw) {
+        const data = JSON.parse(raw || "{}");
+        if (data.title) setTitle(data.title);
+        if (data.html) editor.commands.setContent(data.html);
+      }
+    } catch {}
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editor, draftKey]);
 
   const onPublish = useCallback(async () => {
     if (!title || !editor) return;
@@ -114,13 +141,16 @@ export default function EditorClient({
       }
       const data = await res.json();
       setSuccess(`Published as ${data.slug}.md`);
+      if (typeof window !== "undefined") {
+        try { localStorage.removeItem(draftKey); } catch {}
+      }
       router.prefetch(`/blog/${data.slug}`);
     } catch (e: any) {
       setError(e.message || "Publish failed");
     } finally {
       setSaving(false);
     }
-  }, [title, computedSlug, editor, router, mode, initialSlug]);
+  }, [title, computedSlug, editor, router, mode, initialSlug, draftKey]);
 
   return (
     <section>
@@ -161,7 +191,7 @@ export default function EditorClient({
       {/* Trigger autosave when content changes */}
       <AutoSaveWatcher onChange={scheduleAutosave} deps={[contentSnapshot]} />
 
-      <div style={{ marginTop: "1rem", display: "flex", gap: "0.5rem" }}>
+      <div style={{ marginTop: "1rem", display: "flex", gap: "0.5rem", alignItems: "center" }}>
         <button
           onClick={onPublish}
           disabled={saving || !title}
@@ -189,6 +219,9 @@ export default function EditorClient({
         >
           Save draft
         </button>
+        <span style={{ color: "var(--color-muted)", fontSize: 12 }}>
+          {isAutoSaving ? "Autosaving…" : lastSavedAt ? `Draft saved at ${new Date(lastSavedAt).toLocaleTimeString()}` : ""}
+        </span>
         {success && <span style={{ color: "#16a34a" }}>{success}</span>}
         {error && <span style={{ color: "#b91c1c" }}>{error}</span>}
       </div>
