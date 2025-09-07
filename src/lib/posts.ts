@@ -2,7 +2,10 @@ import path from "node:path";
 import fs from "node:fs/promises";
 import matter from "gray-matter";
 import { remark } from "remark";
-import html from "remark-html";
+import remarkParse from "remark-parse";
+import remarkRehype from "remark-rehype";
+import rehypeRaw from "rehype-raw";
+import rehypeStringify from "rehype-stringify";
 
 export type PostMeta = {
   title: string;
@@ -62,8 +65,14 @@ export async function getPostBySlug(slug: string): Promise<{ meta: PostMeta; htm
   try {
     const raw = await fs.readFile(filePath, "utf8");
     const { data, content } = matter(raw);
-    const processed = await remark().use(html).process(content);
-    const contentHtml = processed.toString();
+    // Render Markdown to HTML while allowing embedded raw HTML (for images/captions)
+    const processed = await remark()
+      .use(remarkParse)
+      .use(remarkRehype, { allowDangerousHtml: true })
+      .use(rehypeRaw)
+      .use(rehypeStringify, { allowDangerousHtml: true })
+      .process(content);
+    const contentHtml = String(processed);
     const meta: PostMeta = {
       title: (data.title as string) || slug,
       slug,

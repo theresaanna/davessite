@@ -325,14 +325,18 @@ export default function EditorClient({
         ref={fileInputRef}
         type="file"
         accept="image/*"
+        multiple
         style={{ display: "none" }}
         onChange={async (e) => {
           const inputEl = e.currentTarget;
-          const file = inputEl.files?.[0];
-          if (!file) return;
+          const files = inputEl.files ? Array.from(inputEl.files) : [];
           // Clear immediately to avoid React synthetic event nulling after await
           inputEl.value = '';
-          await uploadImageFile(file);
+          for (const file of files) {
+            if (file && file.type.startsWith('image/')) {
+              await uploadImageFile(file);
+            }
+          }
         }}
       />
 
