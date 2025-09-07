@@ -8,9 +8,9 @@
    - Environments: .env.local
 
  ✓ Starting...
- ✓ Ready in 633ms
+ ✓ Ready in 663ms
  ○ Compiling / ...
- ✓ Compiled / in 1340ms
+ ✓ Compiled / in 1400ms
 Error: Route "/" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
     at getSession (src/lib/session.ts:19:39)
     at RootLayout (src/app/layout.tsx:30:35)
@@ -21,47 +21,11 @@ Error: Route "/" used `cookies().get('davessite_session')`. `cookies()` should b
   20 |   return session;
   21 | }
   22 |
- GET / 200 in 1487ms
-Error: Route "/" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at getSession (src/lib/session.ts:19:39)
-    at RootLayout (src/app/layout.tsx:30:35)
-  17 |
-  18 | export async function getSession() {
-> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
-     |                                       ^
-  20 |   return session;
-  21 | }
-  22 |
- GET / 200 in 80ms
- ✓ Compiled /favicon.ico in 90ms
- GET /favicon.ico?favicon.0b3bf435.ico 200 in 368ms
- ✓ Compiled /login in 131ms
- GET /login 200 in 153ms
- ✓ Compiled /api/login in 110ms
-Error: Route "/api/login" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at getSession (src/lib/session.ts:19:39)
-    at POST (src/app/api/login/route.ts:17:37)
-  17 |
-  18 | export async function getSession() {
-> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
-     |                                       ^
-  20 |   return session;
-  21 | }
-  22 |
-Error: Route "/api/login" used `cookies().set('davessite_session', ...)`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at async POST (src/app/api/login/route.ts:19:5)
-  17 |     const session = await getSession();
-  18 |     session.user = { username };
-> 19 |     await session.save();
-     |     ^
-  20 |     return NextResponse.json({ ok: true });
-  21 |   }
-  22 |
- POST /api/login 200 in 464ms
- ✓ Compiled /admin in 355ms
+ GET / 200 in 1545ms
+ ✓ Compiled /admin in 368ms
 Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
     at getSession (src/lib/session.ts:19:39)
-    at AdminPage (src/app/admin/page.tsx:8:35)
+    at RootLayout (src/app/layout.tsx:30:35)
   17 |
   18 | export async function getSession() {
 > 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
@@ -69,8 +33,47 @@ Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` sho
   20 |   return session;
   21 | }
   22 |
- GET /admin 200 in 402ms
+ ⨯ ReferenceError: Cannot access 'onSaveDraft' before initialization
+    at EditorClient (src/app/admin/editor/EditorClient.tsx:68:33)
+  66 |     }, 1500);
+  67 |     setAutoTimer(t as any);
+> 68 |   }, [title, editor, autoTimer, onSaveDraft]);
+     |                                 ^
+  69 |
+  70 |   const onSaveDraft = useCallback(async () => {
+  71 |     if (!title || !editor) return; {
+  digest: '3962126691'
+}
+ GET /admin 500 in 486ms
+ ✓ Compiled /favicon.ico in 107ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 378ms
+ GET /favicon.ico 200 in 232ms
+Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at RootLayout (src/app/layout.tsx:30:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+ ⨯ ReferenceError: Cannot access 'onSaveDraft' before initialization
+    at EditorClient (src/app/admin/editor/EditorClient.tsx:68:33)
+  66 |     }, 1500);
+  67 |     setAutoTimer(t as any);
+> 68 |   }, [title, editor, autoTimer, onSaveDraft]);
+     |                                 ^
+  69 |
+  70 |   const onSaveDraft = useCallback(async () => {
+  71 |     if (!title || !editor) return; {
+  digest: '3962126691'
+}
+ GET /admin 500 in 94ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 233ms
+ GET /favicon.ico 200 in 234ms
  ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ✓ Compiled in 10ms
 Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
     at getSession (src/lib/session.ts:19:39)
     at RootLayout (src/app/layout.tsx:30:35)
@@ -81,13 +84,9 @@ Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` sho
   20 |   return session;
   21 | }
   22 |
- ✓ Compiled in 5ms
- ⨯ [Error: Objects are not valid as a React child (found: [object Date]). If you meant to render a collection of children, use an array instead.] {
-  digest: '1732906554'
-}
- GET /admin 500 in 294ms
- GET /favicon.ico?favicon.0b3bf435.ico 200 in 224ms
- GET /favicon.ico 200 in 225ms
+ GET /admin 200 in 172ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 234ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 242ms
 Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
     at getSession (src/lib/session.ts:19:39)
     at RootLayout (src/app/layout.tsx:30:35)
@@ -98,12 +97,9 @@ Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` sho
   20 |   return session;
   21 | }
   22 |
- ⨯ [Error: Objects are not valid as a React child (found: [object Date]). If you meant to render a collection of children, use an array instead.] {
-  digest: '1732906554'
-}
- GET /admin 500 in 189ms
- GET /favicon.ico?favicon.0b3bf435.ico 200 in 226ms
- GET /favicon.ico 200 in 233ms
+ GET /admin 200 in 85ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 230ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 251ms
 Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
     at getSession (src/lib/session.ts:19:39)
     at RootLayout (src/app/layout.tsx:30:35)
@@ -114,12 +110,8 @@ Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` sho
   20 |   return session;
   21 | }
   22 |
- ⨯ [Error: Objects are not valid as a React child (found: [object Date]). If you meant to render a collection of children, use an array instead.] {
-  digest: '1732906554'
-}
- GET /admin 500 in 179ms
- GET /favicon.ico?favicon.0b3bf435.ico 200 in 228ms
- GET /favicon.ico 200 in 252ms
+ GET /admin 200 in 68ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 243ms
 Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
     at getSession (src/lib/session.ts:19:39)
     at RootLayout (src/app/layout.tsx:30:35)
@@ -130,10 +122,7 @@ Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` sho
   20 |   return session;
   21 | }
   22 |
- ⨯ [Error: Objects are not valid as a React child (found: [object Date]). If you meant to render a collection of children, use an array instead.] {
-  digest: '1732906554'
-}
- GET /admin 500 in 157ms
+ GET /admin 200 in 82ms
  GET /favicon.ico?favicon.0b3bf435.ico 200 in 230ms
 Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
     at getSession (src/lib/session.ts:19:39)
@@ -145,12 +134,9 @@ Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` sho
   20 |   return session;
   21 | }
   22 |
- ⨯ [Error: Objects are not valid as a React child (found: [object Date]). If you meant to render a collection of children, use an array instead.] {
-  digest: '1732906554'
-}
- GET /admin 500 in 179ms
- GET /favicon.ico?favicon.0b3bf435.ico 200 in 226ms
- ✓ Compiled /admin in 18ms
+ GET /admin 200 in 107ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 233ms
+ ✓ Compiled in 6ms
 Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
     at getSession (src/lib/session.ts:19:39)
     at RootLayout (src/app/layout.tsx:30:35)
@@ -161,10 +147,23 @@ Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` sho
   20 |   return session;
   21 | }
   22 |
- GET /admin 200 in 226ms
- GET /favicon.ico?favicon.0b3bf435.ico 200 in 231ms
- GET /favicon.ico?favicon.0b3bf435.ico 200 in 231ms
- ✓ Compiled /api/logout in 69ms
+ GET /admin 200 in 208ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 227ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 245ms
+Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at RootLayout (src/app/layout.tsx:30:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+ GET /admin 200 in 95ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 232ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 246ms
+ ✓ Compiled /api/logout in 111ms
 Error: Route "/api/logout" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
     at getSession (src/lib/session.ts:19:39)
     at POST (src/app/api/logout/route.ts:5:35)
@@ -184,7 +183,7 @@ Error: Route "/api/logout" used `cookies().set('davessite_session', ...)`. `cook
   7 |   return NextResponse.json({ ok: true });
   8 | }
   9 |
- POST /api/logout 200 in 428ms
+ POST /api/logout 200 in 460ms
 Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
     at getSession (src/lib/session.ts:19:39)
     at RootLayout (src/app/layout.tsx:30:35)
@@ -196,9 +195,11 @@ Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` sho
   21 | }
   22 |
  GET /admin 200 in 24ms
- GET /login 200 in 31ms
- GET /login 200 in 21ms
- GET /favicon.ico?favicon.0b3bf435.ico 200 in 223ms
+ ✓ Compiled /login in 100ms
+ GET /login 200 in 122ms
+ GET /login 200 in 22ms
+ GET /login 200 in 53ms
+ ✓ Compiled /api/login in 78ms
 Error: Route "/api/login" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
     at getSession (src/lib/session.ts:19:39)
     at POST (src/app/api/login/route.ts:17:37)
@@ -218,7 +219,7 @@ Error: Route "/api/login" used `cookies().set('davessite_session', ...)`. `cooki
   20 |     return NextResponse.json({ ok: true });
   21 |   }
   22 |
- POST /api/login 200 in 362ms
+ POST /api/login 200 in 429ms
 Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
     at getSession (src/lib/session.ts:19:39)
     at AdminPage (src/app/admin/page.tsx:8:35)
@@ -229,18 +230,7 @@ Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` sho
   20 |   return session;
   21 | }
   22 |
- GET /admin 200 in 37ms
- ✓ Compiled /blog/[slug] in 143ms
-Error: Route "/blog/[slug]" used `params.slug`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at BlogPostPage (src/app/blog/[slug]/page.tsx:11:43)
-   9 |
-  10 | export default async function BlogPostPage({ params }: { params: { slug: string } }) {
-> 11 |   const post = await getPostBySlug(params.slug);
-     |                                           ^
-  12 |   if (!post) return notFound();
-  13 |   return (
-  14 |     <article>
- GET /blog/hello-world 200 in 431ms
+ GET /admin 200 in 24ms
 Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
     at getSession (src/lib/session.ts:19:39)
     at RootLayout (src/app/layout.tsx:30:35)
@@ -251,10 +241,55 @@ Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` sho
   20 |   return session;
   21 | }
   22 |
- GET /admin 200 in 30ms
- ✓ Compiled in 27ms
- ✓ Compiled in 32ms
- ✓ Compiled /admin in 17ms
+ GET /admin 200 in 87ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 233ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 240ms
+Error: Route "/" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at RootLayout (src/app/layout.tsx:30:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+ GET / 200 in 82ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 226ms
+ GET /login 200 in 57ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 227ms
+Error: Route "/api/login" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at POST (src/app/api/login/route.ts:17:37)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+Error: Route "/api/login" used `cookies().set('davessite_session', ...)`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at async POST (src/app/api/login/route.ts:19:5)
+  17 |     const session = await getSession();
+  18 |     session.user = { username };
+> 19 |     await session.save();
+     |     ^
+  20 |     return NextResponse.json({ ok: true });
+  21 |   }
+  22 |
+ POST /api/login 200 in 375ms
+Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at AdminPage (src/app/admin/page.tsx:8:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+ GET /admin 200 in 23ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 229ms
 Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
     at getSession (src/lib/session.ts:19:39)
     at RootLayout (src/app/layout.tsx:30:35)
@@ -265,7 +300,9 @@ Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` sho
   20 |   return session;
   21 | }
   22 |
- GET /admin 200 in 101ms
+ GET /admin 200 in 105ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 225ms
+ ✓ Compiled in 6ms
 Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
     at getSession (src/lib/session.ts:19:39)
     at RootLayout (src/app/layout.tsx:30:35)
@@ -276,7 +313,102 @@ Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` sho
   20 |   return session;
   21 | }
   22 |
- GET /admin 200 in 40ms
+ GET /admin 200 in 231ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 226ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 246ms
+Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at RootLayout (src/app/layout.tsx:30:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+ GET /admin 200 in 82ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 228ms
+Error: Route "/" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at RootLayout (src/app/layout.tsx:30:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+ GET / 200 in 90ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 228ms
+ GET /login 200 in 62ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 225ms
+Error: Route "/api/login" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at POST (src/app/api/login/route.ts:17:37)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+Error: Route "/api/login" used `cookies().set('davessite_session', ...)`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at async POST (src/app/api/login/route.ts:19:5)
+  17 |     const session = await getSession();
+  18 |     session.user = { username };
+> 19 |     await session.save();
+     |     ^
+  20 |     return NextResponse.json({ ok: true });
+  21 |   }
+  22 |
+ POST /api/login 200 in 382ms
+Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at AdminPage (src/app/admin/page.tsx:8:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+ GET /admin 200 in 26ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 232ms
+Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at RootLayout (src/app/layout.tsx:30:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+ GET /admin 200 in 90ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 225ms
+ ✓ Compiled /api/admin/posts in 230ms
+Error: Route "/api/admin/posts" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at POST (src/app/api/admin/posts/route.ts:7:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+ POST /api/admin/posts 200 in 581ms
+Error: Route "/api/admin/posts" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at POST (src/app/api/admin/posts/route.ts:7:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+ POST /api/admin/posts 200 in 310ms
 Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
     at getSession (src/lib/session.ts:19:39)
     at RootLayout (src/app/layout.tsx:30:35)
@@ -288,309 +420,73 @@ Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` sho
   21 | }
   22 |
  GET /admin 200 in 108ms
-Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at getSession (src/lib/session.ts:19:39)
-    at RootLayout (src/app/layout.tsx:30:35)
-  17 |
-  18 | export async function getSession() {
-> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
-     |                                       ^
-  20 |   return session;
-  21 | }
-  22 |
- GET /admin 200 in 44ms
- ✓ Compiled in 4ms
-Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at getSession (src/lib/session.ts:19:39)
-    at RootLayout (src/app/layout.tsx:30:35)
-  17 |
-  18 | export async function getSession() {
-> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
-     |                                       ^
-  20 |   return session;
-  21 | }
-  22 |
- GET /admin 200 in 258ms
- GET /favicon.ico?favicon.0b3bf435.ico 200 in 255ms
- GET /favicon.ico?favicon.0b3bf435.ico 200 in 229ms
- ✓ Compiled /blog/[slug] in 24ms
-Error: Route "/blog/[slug]" used `params.slug`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at BlogPostPage (src/app/blog/[slug]/page.tsx:12:43)
-  10 |
-  11 | export default async function BlogPostPage({ params }: { params: { slug: string } }) {
-> 12 |   const post = await getPostBySlug(params.slug);
-     |                                           ^
-  13 |   if (!post) return notFound();
-  14 |   return (
-  15 |     <article>
- GET /blog/hello-world 200 in 137ms
- ✓ Compiled /blog in 129ms
- GET /blog 200 in 153ms
- GET /favicon.ico?favicon.0b3bf435.ico 200 in 222ms
-Error: Route "/blog/[slug]" used `params.slug`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at BlogPostPage (src/app/blog/[slug]/page.tsx:12:43)
-  10 |
-  11 | export default async function BlogPostPage({ params }: { params: { slug: string } }) {
-> 12 |   const post = await getPostBySlug(params.slug);
-     |                                           ^
-  13 |   if (!post) return notFound();
-  14 |   return (
-  15 |     <article>
- GET /blog/hello-world 200 in 45ms
-Error: Route "/" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at getSession (src/lib/session.ts:19:39)
-    at RootLayout (src/app/layout.tsx:30:35)
-  17 |
-  18 | export async function getSession() {
-> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
-     |                                       ^
-  20 |   return session;
-  21 | }
-  22 |
- GET / 200 in 124ms
- GET /favicon.ico?favicon.0b3bf435.ico 200 in 241ms
-Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at getSession (src/lib/session.ts:19:39)
-    at RootLayout (src/app/layout.tsx:30:35)
-  17 |
-  18 | export async function getSession() {
-> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
-     |                                       ^
-  20 |   return session;
-  21 | }
-  22 |
- GET /admin 200 in 83ms
- GET /favicon.ico?favicon.0b3bf435.ico 200 in 228ms
- ✓ Compiled /admin/posts/[slug]/edit in 130ms
- ⨯ ./src/app/admin/posts/[slug]/edit/page.tsx:4:1
-Module not found: Can't resolve '../../editor/EditorClient'
-[0m [90m 2 |[39m [36mimport[39m { getSession } [36mfrom[39m [32m"@/lib/session"[39m[33m;[39m
- [90m 3 |[39m [36mimport[39m { getPostBySlug } [36mfrom[39m [32m"@/lib/posts"[39m[33m;[39m
-[31m[1m>[22m[39m[90m 4 |[39m [36mimport[39m [33mEditorClient[39m [36mfrom[39m [32m"../../editor/EditorClient"[39m[33m;[39m
- [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
- [90m 5 |[39m
- [90m 6 |[39m [36mexport[39m [36mdefault[39m [36masync[39m [36mfunction[39m [33mEditPostPage[39m({ params }[33m:[39m { params[33m:[39m { slug[33m:[39m string } }) {
- [90m 7 |[39m   [36mconst[39m session [33m=[39m [36mawait[39m getSession()[33m;[39m[0m
-
-
-
-https://nextjs.org/docs/messages/module-not-found
-
-
- ✓ Compiled /_error in 483ms
- GET /admin/posts/hello-world/edit 500 in 698ms
- ⨯ ./src/app/admin/posts/[slug]/edit/page.tsx:4:1
-Module not found: Can't resolve '../../editor/EditorClient'
-[0m [90m 2 |[39m [36mimport[39m { getSession } [36mfrom[39m [32m"@/lib/session"[39m[33m;[39m
- [90m 3 |[39m [36mimport[39m { getPostBySlug } [36mfrom[39m [32m"@/lib/posts"[39m[33m;[39m
-[31m[1m>[22m[39m[90m 4 |[39m [36mimport[39m [33mEditorClient[39m [36mfrom[39m [32m"../../editor/EditorClient"[39m[33m;[39m
- [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
- [90m 5 |[39m
- [90m 6 |[39m [36mexport[39m [36mdefault[39m [36masync[39m [36mfunction[39m [33mEditPostPage[39m({ params }[33m:[39m { params[33m:[39m { slug[33m:[39m string } }) {
- [90m 7 |[39m   [36mconst[39m session [33m=[39m [36mawait[39m getSession()[33m;[39m[0m
-
-
-
-https://nextjs.org/docs/messages/module-not-found
-
-
- GET /admin/posts/hello-world/edit 500 in 17ms
- GET /favicon.ico 500 in 21ms
- ✓ Compiled /admin/posts/[slug]/edit in 14ms
-Error: Route "/admin/posts/[slug]/edit" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at getSession (src/lib/session.ts:19:39)
-    at RootLayout (src/app/layout.tsx:30:35)
-  17 |
-  18 | export async function getSession() {
-> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
-     |                                       ^
-  20 |   return session;
-  21 | }
-  22 |
-Error: Route "/admin/posts/[slug]/edit" used `params.slug`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at EditPostPage (src/app/admin/posts/[slug]/edit/page.tsx:9:43)
-   7 |   const session = await getSession();
-   8 |   if (!session.user) redirect("/login");
->  9 |   const post = await getPostBySlug(params.slug);
-     |                                           ^
-  10 |   if (!post) redirect("/admin");
-  11 |   return (
-  12 |     <section>
- GET /admin/posts/hello-world/edit 200 in 463ms
- GET /favicon.ico?favicon.0b3bf435.ico 200 in 249ms
- GET /favicon.ico?favicon.0b3bf435.ico 200 in 227ms
- ✓ Compiled in 9ms
- ✓ Compiled /admin/posts/[slug]/edit in 21ms
-Error: Route "/admin/posts/[slug]/edit" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at getSession (src/lib/session.ts:19:39)
-    at RootLayout (src/app/layout.tsx:30:35)
-  17 |
-  18 | export async function getSession() {
-> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
-     |                                       ^
-  20 |   return session;
-  21 | }
-  22 |
-Error: Route "/admin/posts/[slug]/edit" used `params.slug`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at EditPostPage (src/app/admin/posts/[slug]/edit/page.tsx:9:43)
-   7 |   const session = await getSession();
-   8 |   if (!session.user) redirect("/login");
->  9 |   const post = await getPostBySlug(params.slug);
-     |                                           ^
-  10 |   if (!post) redirect("/admin");
-  11 |   return (
-  12 |     <section>
- GET /admin/posts/hello-world/edit 200 in 138ms
-Error: Route "/admin/posts/[slug]/edit" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at getSession (src/lib/session.ts:19:39)
-    at RootLayout (src/app/layout.tsx:30:35)
-  17 |
-  18 | export async function getSession() {
-> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
-     |                                       ^
-  20 |   return session;
-  21 | }
-  22 |
-Error: Route "/admin/posts/[slug]/edit" used `params.slug`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at EditPostPage (src/app/admin/posts/[slug]/edit/page.tsx:9:43)
-   7 |   const session = await getSession();
-   8 |   if (!session.user) redirect("/login");
->  9 |   const post = await getPostBySlug(params.slug);
-     |                                           ^
-  10 |   if (!post) redirect("/admin");
-  11 |   return (
-  12 |     <section>
- GET /admin/posts/hello-world/edit 200 in 68ms
-Error: Route "/admin/posts/[slug]/edit" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at getSession (src/lib/session.ts:19:39)
-    at RootLayout (src/app/layout.tsx:30:35)
-  17 |
-  18 | export async function getSession() {
-> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
-     |                                       ^
-  20 |   return session;
-  21 | }
-  22 |
-Error: Route "/admin/posts/[slug]/edit" used `params.slug`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at EditPostPage (src/app/admin/posts/[slug]/edit/page.tsx:9:43)
-   7 |   const session = await getSession();
-   8 |   if (!session.user) redirect("/login");
->  9 |   const post = await getPostBySlug(params.slug);
-     |                                           ^
-  10 |   if (!post) redirect("/admin");
-  11 |   return (
-  12 |     <section>
- GET /admin/posts/hello-world/edit 200 in 31ms
-Error: Route "/admin/posts/[slug]/edit" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at getSession (src/lib/session.ts:19:39)
-    at RootLayout (src/app/layout.tsx:30:35)
-  17 |
-  18 | export async function getSession() {
-> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
-     |                                       ^
-  20 |   return session;
-  21 | }
-  22 |
-Error: Route "/admin/posts/[slug]/edit" used `params.slug`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at EditPostPage (src/app/admin/posts/[slug]/edit/page.tsx:9:43)
-   7 |   const session = await getSession();
-   8 |   if (!session.user) redirect("/login");
->  9 |   const post = await getPostBySlug(params.slug);
-     |                                           ^
-  10 |   if (!post) redirect("/admin");
-  11 |   return (
-  12 |     <section>
- GET /admin/posts/hello-world/edit 200 in 34ms
- ✓ Compiled /admin in 30ms
-Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at getSession (src/lib/session.ts:19:39)
-    at AdminPage (src/app/admin/page.tsx:8:35)
-  17 |
-  18 | export async function getSession() {
-> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
-     |                                       ^
-  20 |   return session;
-  21 | }
-  22 |
- GET /admin 200 in 131ms
- ✓ Compiled /admin in 17ms
-Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at getSession (src/lib/session.ts:19:39)
-    at RootLayout (src/app/layout.tsx:30:35)
-  17 |
-  18 | export async function getSession() {
-> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
-     |                                       ^
-  20 |   return session;
-  21 | }
-  22 |
- GET /admin 200 in 103ms
-Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at getSession (src/lib/session.ts:19:39)
-    at RootLayout (src/app/layout.tsx:30:35)
-  17 |
-  18 | export async function getSession() {
-> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
-     |                                       ^
-  20 |   return session;
-  21 | }
-  22 |
- GET /admin 200 in 41ms
- ✓ Compiled in 16ms
- ✓ Compiled /about in 128ms
- GET /about 200 in 152ms
- ✓ Compiled in 9ms
- ✓ Compiled /works in 122ms
- GET /works 200 in 142ms
- ✓ Compiled /blog in 34ms
- GET /blog 200 in 131ms
- ✓ Compiled /blog/[slug] in 31ms
-Error: Route "/blog/[slug]" used `params.slug`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at BlogPostPage (src/app/blog/[slug]/page.tsx:12:43)
-  10 |
-  11 | export default async function BlogPostPage({ params }: { params: { slug: string } }) {
-> 12 |   const post = await getPostBySlug(params.slug);
-     |                                           ^
-  13 |   if (!post) return notFound();
-  14 |   if (post.meta.status !== "published") return notFound();
-  15 |   return (
- GET /blog/hello-world 200 in 134ms
- GET /blog 200 in 57ms
-Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at getSession (src/lib/session.ts:19:39)
-    at AdminPage (src/app/admin/page.tsx:8:35)
-  17 |
-  18 | export async function getSession() {
-> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
-     |                                       ^
-  20 |   return session;
-  21 | }
-  22 |
- GET /admin 200 in 123ms
- ✓ Compiled in 7ms
- ⚠ Fast Refresh had to perform a full reload due to a runtime error.
-Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
-    at getSession (src/lib/session.ts:19:39)
-    at RootLayout (src/app/layout.tsx:30:35)
-  17 |
-  18 | export async function getSession() {
-> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
-     |                                       ^
-  20 |   return session;
-  21 | }
-  22 |
- ✓ Compiled in 53ms
- ⨯ ReferenceError: Cannot access 'onSaveDraft' before initialization
-    at EditorClient (src/app/admin/editor/EditorClient.tsx:68:33)
-  66 |     }, 1500);
-  67 |     setAutoTimer(t as any);
-> 68 |   }, [title, editor, autoTimer, onSaveDraft]);
-     |                                 ^
-  69 |
-  70 |   const onSaveDraft = useCallback(async () => {
-  71 |     if (!title || !editor) return; {
-  digest: '4276588518'
-}
- GET /admin 500 in 225ms
  GET /favicon.ico?favicon.0b3bf435.ico 200 in 224ms
- GET /favicon.ico 200 in 228ms
+Error: Route "/api/admin/posts" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at POST (src/app/api/admin/posts/route.ts:7:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+ POST /api/admin/posts 200 in 288ms
+ ✓ Compiled in 4ms
+ ✓ Compiled in 38ms
+ ✓ Compiled in 37ms
+Error: Route "/api/admin/posts" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at POST (src/app/api/admin/posts/route.ts:7:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+ POST /api/admin/posts 200 in 313ms
+Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at RootLayout (src/app/layout.tsx:30:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at RootLayout (src/app/layout.tsx:30:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+ GET /admin 200 in 170ms
+ GET /admin 200 in 172ms
+Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at RootLayout (src/app/layout.tsx:30:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at RootLayout (src/app/layout.tsx:30:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+ GET /admin 200 in 67ms
+ GET /admin 200 in 66ms

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
@@ -58,6 +58,8 @@ export default function EditorClient({
   const [success, setSuccess] = useState<string | null>(null);
   const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const editor = useEditor({
     extensions: [
@@ -204,10 +206,13 @@ export default function EditorClient({
       </div>
 
       {mode === "create" && (
-        <div style={{ color: "var(--color-muted)", fontSize: 12, margin: "-0.25rem 0 0.5rem" }}>
+        <div style={{ color: "var(--color-muted)", fontSize: 12, margin: "-0.25rem 0 0.25rem" }}>
           Note: autosave runs only after you add a title.
         </div>
       )}
+      <div style={{ color: "var(--color-muted)", fontSize: 12, margin: "0 0 0.5rem" }}>
+        Formatting tips: <a href="https://www.markdownguide.org/basic-syntax/" target="_blank" rel="noopener noreferrer">Markdown reference</a>
+      </div>
 
       {/* Toolbar */}
       {editor && (
@@ -234,12 +239,44 @@ export default function EditorClient({
             const src = window.prompt('Image URL (https://...)');
             if (!src) return;
             editor.chain().focus().setImage({ src }).run();
-          }}>Image</ToolButton>
+          }}>Image URL</ToolButton>
+          <ToolButton onClick={() => fileInputRef.current?.click()}>{uploadingImage ? 'Uploading…' : 'Upload Image'}</ToolButton>
           <Separator />
           <ToolButton onClick={() => editor.chain().focus().undo().run()}>Undo</ToolButton>
           <ToolButton onClick={() => editor.chain().focus().redo().run()}>Redo</ToolButton>
         </div>
       )}
+
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        style={{ display: "none" }}
+        onChange={async (e) => {
+          const file = e.currentTarget.files?.[0];
+          if (!file) return;
+          setUploadingImage(true);
+          setError(null);
+          try {
+            const body = new FormData();
+            body.append('file', file);
+            const res = await fetch('/api/admin/upload', { method: 'POST', body });
+            if (!res.ok) {
+              const data = await res.json().catch(() => ({}));
+              throw new Error(data.error || `Upload failed (${res.status})`);
+            }
+            const data = await res.json();
+            if (data.url) {
+              editor?.chain().focus().setImage({ src: data.url }).run();
+            }
+          } catch (err: any) {
+            setError(err.message || 'Upload failed');
+          } finally {
+            setUploadingImage(false);
+            e.currentTarget.value = '';
+          }
+        }}
+      />
 
       <div
         style={{
