@@ -81,6 +81,21 @@ body {
   margin: 0.5rem 0 1rem;
 }
 
+/* Editor visuals */
+.editor-surface .ProseMirror {
+  min-height: 200px;
+}
+.editor-surface .ProseMirror blockquote {
+  border-left: 4px solid var(--color-accent);
+  background: #f8fafc;
+  color: var(--color-muted);
+  margin: 0.75rem 0;
+  padding: 0.5rem 0.75rem;
+}
+.editor-surface .ProseMirror blockquote p {
+  margin: 0.25rem 0;
+}
+
 /* Main & Footer */
 .site-main {
   padding: 2rem 1rem;

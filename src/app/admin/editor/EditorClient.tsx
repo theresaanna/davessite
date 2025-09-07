@@ -341,6 +341,7 @@ export default function EditorClient({
       />
 
       <div
+        className="editor-surface"
         onPaste={async (e) => {
           if (!e.clipboardData) return;
           const files = Array.from(e.clipboardData.files).filter(f => f.type.startsWith('image/'));
