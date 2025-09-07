@@ -29,6 +29,7 @@ export default function EditorClient() {
     ],
     content: "<p>Write your post here…</p>",
     autofocus: true,
+    immediatelyRender: false,
   });
 
   const html = useMemo(() => editor?.getHTML() ?? "", [editor, editor?.state]);
@@ -94,7 +95,7 @@ export default function EditorClient() {
           background: "#fff",
         }}
       >
-        <EditorContent editor={editor} />
+        {editor && <EditorContent editor={editor} />}
       </div>
 
       <div style={{ marginTop: "1rem", display: "flex", gap: "0.5rem" }}>
