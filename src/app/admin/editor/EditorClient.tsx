@@ -168,6 +168,44 @@ export default function EditorClient({
     }
   }, [editor]);
 
+  const openImageSettings = useCallback(() => {
+    if (!editor) return;
+    if (!editor.isActive('image')) {
+      alert('Place the cursor on an image first.');
+      return;
+    }
+    const attrs = editor.getAttributes('image') || {};
+    const currentAlt = attrs.alt || '';
+    const currentStyle = attrs.style || '';
+    const widthMatch = /width:\s*([^;]+)/.exec(currentStyle);
+    const currentWidth = widthMatch ? widthMatch[1].trim() : '';
+
+    const alt = window.prompt('Alt text (for accessibility):', currentAlt) ?? currentAlt;
+    const caption = window.prompt('Caption (optional):', '') ?? '';
+    const width = window.prompt('Width (e.g., 600px or 100%):', currentWidth || '100%') ?? currentWidth;
+    const align = window.prompt('Align: left | center | right', 'center') ?? 'center';
+
+    let styleParts: string[] = [];
+    if (width) styleParts.push(`width:${width}`);
+    if (align === 'center') {
+      styleParts.push('display:block');
+      styleParts.push('margin-left:auto');
+      styleParts.push('margin-right:auto');
+    } else if (align === 'right') {
+      styleParts.push('float:right');
+      styleParts.push('margin:0 0 1rem 1rem');
+    } else if (align === 'left') {
+      styleParts.push('float:left');
+      styleParts.push('margin:0 1rem 1rem 0');
+    }
+    const style = styleParts.join(';');
+
+    editor.chain().focus().updateAttributes('image', { alt, style }).run();
+    if (caption && caption.trim().length > 0) {
+      editor.chain().focus().insertContent(`<p class="image-caption">${caption}</p>`).run();
+    }
+  }, [editor]);
+
   const onPublish = useCallback(async () => {
     if (!title || !editor) return;
     setSaving(true);
@@ -266,6 +304,7 @@ export default function EditorClient({
             editor.chain().focus().setImage({ src }).run();
           }}>Image URL</ToolButton>
           <ToolButton title="Upload image" onClick={() => fileInputRef.current?.click()}>{uploadingImage ? 'Uploading…' : 'Upload Image'}</ToolButton>
+          <ToolButton title="Image settings (alt, caption, size, align)" onClick={() => openImageSettings()}>Image settings</ToolButton>
           <Separator />
           <ToolButton title="Undo (Cmd/Ctrl+Z)" onClick={() => editor.chain().focus().undo().run()}>Undo</ToolButton>
           <ToolButton title="Redo (Cmd/Ctrl+Shift+Z)" onClick={() => editor.chain().focus().redo().run()}>Redo</ToolButton>

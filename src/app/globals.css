@@ -72,6 +72,15 @@ body {
   background: #f8fafc;
 }
 
+/* Image captions */
+.image-caption {
+  color: var(--color-muted);
+  font-size: 0.875rem;
+  font-style: italic;
+  text-align: center;
+  margin: 0.5rem 0 1rem;
+}
+
 /* Main & Footer */
 .site-main {
   padding: 2rem 1rem;

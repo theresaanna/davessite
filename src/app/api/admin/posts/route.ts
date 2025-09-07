@@ -15,6 +15,18 @@ export async function POST(req: Request) {
   }
 
   const turndown = new TurndownService({ headingStyle: "atx" });
+  // Preserve images/figures/captions as HTML to retain attrs like alt, style, etc.
+  turndown.addRule('keepImagesAndCaptions', {
+    filter: (node) => {
+      return (
+        (node.nodeName === 'IMG') ||
+        (node.nodeName === 'FIGURE') ||
+        (node.nodeName === 'FIGCAPTION') ||
+        (node.nodeName === 'P' && (node as HTMLElement).classList?.contains('image-caption'))
+      );
+    },
+    replacement: (_content, node) => (node as HTMLElement).outerHTML || ''
+  });
   const markdown = turndown.turndown(html as string);
 
   const saved = await saveMarkdownPost({ title, slug, markdown, status: status || "draft" });

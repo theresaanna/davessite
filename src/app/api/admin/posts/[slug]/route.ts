@@ -31,6 +31,17 @@ export async function PUT(
     return NextResponse.json({ error: "Missing title or html" }, { status: 400 });
   }
   const turndown = new TurndownService({ headingStyle: "atx" });
+  turndown.addRule('keepImagesAndCaptions', {
+    filter: (node) => {
+      return (
+        (node.nodeName === 'IMG') ||
+        (node.nodeName === 'FIGURE') ||
+        (node.nodeName === 'FIGCAPTION') ||
+        (node.nodeName === 'P' && (node as HTMLElement).classList?.contains('image-caption'))
+      );
+    },
+    replacement: (_content, node) => (node as HTMLElement).outerHTML || ''
+  });
   const markdown = turndown.turndown(html as string);
   const saved = await updateMarkdownPost({ prevSlug: params.slug, title, slug, markdown, status });
   return NextResponse.json({ ok: true, slug: saved.slug });

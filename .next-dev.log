@@ -490,3 +490,28 @@ Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` sho
   22 |
  GET /admin 200 in 67ms
  GET /admin 200 in 66ms
+ ✓ Compiled in 26ms
+Error: Route "/api/admin/posts" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at POST (src/app/api/admin/posts/route.ts:7:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+ POST /api/admin/posts 200 in 464ms
+ ✓ Compiled in 10ms
+Error: Route "/api/admin/posts" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at POST (src/app/api/admin/posts/route.ts:7:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+ POST /api/admin/posts 200 in 330ms
+ ✓ Compiled in 3ms
