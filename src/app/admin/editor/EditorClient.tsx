@@ -79,7 +79,6 @@ export default function EditorClient({
     },
   });
 
-  const html = useMemo(() => editor?.getHTML() ?? "", [editor]);
   const computedSlug = useMemo(() => (title ? slugify(title) : initialSlug || ""), [title, initialSlug]);
   const draftKey = useMemo(() => (initialSlug ? `editor-draft-${initialSlug}` : "editor-draft-new"), [initialSlug]);
 
@@ -128,6 +127,7 @@ export default function EditorClient({
   // Also autosave when the title changes
   useEffect(() => {
     scheduleAutosave();
+    // intentionally not including scheduleAutosave in deps to avoid re-creating timer on every render
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [title]);
 
@@ -143,7 +143,6 @@ export default function EditorClient({
         if (data.html) editor.commands.setContent(data.html);
       }
     } catch {}
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editor, draftKey]);
 
   const uploadImageFile = useCallback(async (file: File) => {
@@ -186,7 +185,7 @@ export default function EditorClient({
     const width = window.prompt('Width (e.g., 600px or 100%):', currentWidth || '100%') ?? currentWidth;
     const align = window.prompt('Align: left | center | right', 'center') ?? 'center';
 
-    let styleParts: string[] = [];
+    const styleParts: string[] = [];
     if (width) styleParts.push(`width:${width}`);
     if (align === 'center') {
       styleParts.push('display:block');
@@ -202,7 +201,7 @@ export default function EditorClient({
     const style = styleParts.join(';');
 
     // Remember position after the image so we can insert a caption without replacing the image
-    const insertPos = (editor.state as any).selection?.to ?? null;
+    const insertPos = (editor.state as import('@tiptap/pm/state').EditorState).selection?.to ?? null;
 
     editor.chain().focus().updateAttributes('image', { alt, style }).run();
     if (caption && caption.trim().length > 0) {

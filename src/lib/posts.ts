@@ -76,10 +76,11 @@ export async function getPostBySlug(slug: string): Promise<{ meta: PostMeta; htm
       .use(rehypeRaw)
       .use(function rehypeWrapImages() {
         return (tree: Root) => {
-          visit(tree, 'element', (node: Element, index: number | null, parent: Parent | null) => {
+          visit(tree, 'element', (node: Element, index: number | undefined, parent: Parent | undefined) => {
             if (!node || node.tagName !== 'img' || !parent || typeof index !== 'number') return;
             // If already wrapped in a link, skip
-            if ((parent as Element).tagName === 'a') return;
+            const parentEl = parent as unknown as Element;
+            if (parentEl.tagName === 'a') return;
             const props = (node.properties ?? {}) as { src?: string };
             const src = props.src;
             if (!src) return;
@@ -184,11 +185,11 @@ export async function updatePostStatus(slug: string, status: "draft" | "publishe
   try {
     const raw = await fs.readFile(filePath, "utf8");
     const parsed = matter(raw);
-    const data: any = { ...parsed.data, status };
+    const data: Record<string, unknown> = { ...(parsed.data as Record<string, unknown>), status };
     if (status === "published" && !data.date) {
       data.date = new Date().toISOString();
     }
-  const file = matter.stringify(parsed.content as string, data as Record<string, unknown>);
+    const file = matter.stringify(parsed.content as string, data as Record<string, unknown>);
     await fs.writeFile(filePath, file, "utf8");
     return true;
   } catch {

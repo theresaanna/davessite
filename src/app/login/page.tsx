@@ -25,8 +25,9 @@ export default function LoginPage() {
         throw new Error(data.error || `Login failed (${res.status})`);
       }
       router.push("/admin");
-    } catch (e: any) {
-      setError(e.message || "Login failed");
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "Login failed";
+      setError(msg);
     } finally {
       setLoading(false);
     }

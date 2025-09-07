@@ -34,7 +34,7 @@ export default async function RootLayout({
         <header className="site-header">
           <div className="container" style={{ gap: "1rem" }}>
             <h1 className="site-title">
-              <Link href="/">Dave's Site</Link>
+              <Link href="/">Dave’s Site</Link>
             </h1>
             <nav className="site-nav" aria-label="Primary">
               <ul>

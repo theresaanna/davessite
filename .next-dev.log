@@ -903,3 +903,833 @@ Error: Route "/admin/posts/[slug]/edit" used `params.slug`. `params` should be a
  GET /admin 200 in 102ms
  GET /admin/posts/things/edit 200 in 85ms
  ✓ Compiled in 15ms
+Error: Route "/admin/posts/[slug]/edit" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at RootLayout (src/app/layout.tsx:30:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+Error: Route "/admin/posts/[slug]/edit" used `params.slug`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at EditPostPage (src/app/admin/posts/[slug]/edit/page.tsx:9:43)
+   7 |   const session = await getSession();
+   8 |   if (!session.user) redirect("/login");
+>  9 |   const post = await getPostBySlug(params.slug);
+     |                                           ^
+  10 |   if (!post) redirect("/admin");
+  11 |   return (
+  12 |     <section>
+ GET /admin/posts/things/edit 200 in 245ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 238ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 236ms
+ ✓ Compiled /api/admin/posts/[slug] in 121ms
+Error: Route "/api/admin/posts/[slug]" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at PUT (src/app/api/admin/posts/[slug]/route.ts:25:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+Error: Route "/api/admin/posts/[slug]" used `params.slug`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at PUT (src/app/api/admin/posts/[slug]/route.ts:46:61)
+  44 |   });
+  45 |   const markdown = turndown.turndown(html as string);
+> 46 |   const saved = await updateMarkdownPost({ prevSlug: params.slug, title, slug, markdown, status });
+     |                                                             ^
+  47 |   return NextResponse.json({ ok: true, slug: saved.slug });
+  48 | }
+  49 |
+ PUT /api/admin/posts/things 200 in 884ms
+ ✓ Compiled /blog in 141ms
+ GET /blog 200 in 167ms
+ ✓ Compiled /blog/[slug] in 33ms
+Error: Route "/blog/[slug]" used `params.slug`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at BlogPostPage (src/app/blog/[slug]/page.tsx:12:43)
+  10 |
+  11 | export default async function BlogPostPage({ params }: { params: { slug: string } }) {
+> 12 |   const post = await getPostBySlug(params.slug);
+     |                                           ^
+  13 |   if (!post) return notFound();
+  14 |   if (post.meta.status !== "published") return notFound();
+  15 |   return (
+ GET /blog/things 200 in 131ms
+Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at AdminPage (src/app/admin/page.tsx:8:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+ GET /admin 200 in 123ms
+Error: Route "/admin/posts/[slug]/edit" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at EditPostPage (src/app/admin/posts/[slug]/edit/page.tsx:7:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+Error: Route "/admin/posts/[slug]/edit" used `params.slug`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at EditPostPage (src/app/admin/posts/[slug]/edit/page.tsx:9:43)
+   7 |   const session = await getSession();
+   8 |   if (!session.user) redirect("/login");
+>  9 |   const post = await getPostBySlug(params.slug);
+     |                                           ^
+  10 |   if (!post) redirect("/admin");
+  11 |   return (
+  12 |     <section>
+ GET /admin/posts/things/edit 200 in 96ms
+Error: Route "/api/admin/posts/[slug]" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at PUT (src/app/api/admin/posts/[slug]/route.ts:25:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+Error: Route "/api/admin/posts/[slug]" used `params.slug`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at PUT (src/app/api/admin/posts/[slug]/route.ts:46:61)
+  44 |   });
+  45 |   const markdown = turndown.turndown(html as string);
+> 46 |   const saved = await updateMarkdownPost({ prevSlug: params.slug, title, slug, markdown, status });
+     |                                                             ^
+  47 |   return NextResponse.json({ ok: true, slug: saved.slug });
+  48 | }
+  49 |
+ PUT /api/admin/posts/things 200 in 382ms
+Error: Route "/api/admin/posts/[slug]" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at PUT (src/app/api/admin/posts/[slug]/route.ts:25:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+Error: Route "/api/admin/posts/[slug]" used `params.slug`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at PUT (src/app/api/admin/posts/[slug]/route.ts:46:61)
+  44 |   });
+  45 |   const markdown = turndown.turndown(html as string);
+> 46 |   const saved = await updateMarkdownPost({ prevSlug: params.slug, title, slug, markdown, status });
+     |                                                             ^
+  47 |   return NextResponse.json({ ok: true, slug: saved.slug });
+  48 | }
+  49 |
+ PUT /api/admin/posts/things 200 in 350ms
+Error: Route "/api/admin/posts/[slug]" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at PUT (src/app/api/admin/posts/[slug]/route.ts:25:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+Error: Route "/api/admin/posts/[slug]" used `params.slug`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at PUT (src/app/api/admin/posts/[slug]/route.ts:46:61)
+  44 |   });
+  45 |   const markdown = turndown.turndown(html as string);
+> 46 |   const saved = await updateMarkdownPost({ prevSlug: params.slug, title, slug, markdown, status });
+     |                                                             ^
+  47 |   return NextResponse.json({ ok: true, slug: saved.slug });
+  48 | }
+  49 |
+ PUT /api/admin/posts/things 200 in 358ms
+Error: Route "/api/admin/posts/[slug]" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at PUT (src/app/api/admin/posts/[slug]/route.ts:25:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+Error: Route "/api/admin/posts/[slug]" used `params.slug`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at PUT (src/app/api/admin/posts/[slug]/route.ts:46:61)
+  44 |   });
+  45 |   const markdown = turndown.turndown(html as string);
+> 46 |   const saved = await updateMarkdownPost({ prevSlug: params.slug, title, slug, markdown, status });
+     |                                                             ^
+  47 |   return NextResponse.json({ ok: true, slug: saved.slug });
+  48 | }
+  49 |
+ PUT /api/admin/posts/things 200 in 366ms
+Error: Route "/api/admin/posts/[slug]" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at PUT (src/app/api/admin/posts/[slug]/route.ts:25:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+Error: Route "/api/admin/posts/[slug]" used `params.slug`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at PUT (src/app/api/admin/posts/[slug]/route.ts:46:61)
+  44 |   });
+  45 |   const markdown = turndown.turndown(html as string);
+> 46 |   const saved = await updateMarkdownPost({ prevSlug: params.slug, title, slug, markdown, status });
+     |                                                             ^
+  47 |   return NextResponse.json({ ok: true, slug: saved.slug });
+  48 | }
+  49 |
+ PUT /api/admin/posts/things 200 in 349ms
+ ✓ Compiled in 13ms
+Error: Route "/api/admin/upload" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at POST (src/app/api/admin/upload/route.ts:7:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+ POST /api/admin/upload 200 in 316ms
+Error: Route "/api/admin/upload" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at POST (src/app/api/admin/upload/route.ts:7:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+ POST /api/admin/upload 200 in 285ms
+Error: Route "/api/admin/posts/[slug]" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at PUT (src/app/api/admin/posts/[slug]/route.ts:25:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+Error: Route "/api/admin/posts/[slug]" used `params.slug`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at PUT (src/app/api/admin/posts/[slug]/route.ts:46:61)
+  44 |   });
+  45 |   const markdown = turndown.turndown(html as string);
+> 46 |   const saved = await updateMarkdownPost({ prevSlug: params.slug, title, slug, markdown, status });
+     |                                                             ^
+  47 |   return NextResponse.json({ ok: true, slug: saved.slug });
+  48 | }
+  49 |
+ PUT /api/admin/posts/things 200 in 350ms
+ ✓ Compiled /admin in 17ms
+Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at RootLayout (src/app/layout.tsx:30:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+Error: Route "/admin/posts/[slug]/edit" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at RootLayout (src/app/layout.tsx:30:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+Error: Route "/admin/posts/[slug]/edit" used `params.slug`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at EditPostPage (src/app/admin/posts/[slug]/edit/page.tsx:9:43)
+   7 |   const session = await getSession();
+   8 |   if (!session.user) redirect("/login");
+>  9 |   const post = await getPostBySlug(params.slug);
+     |                                           ^
+  10 |   if (!post) redirect("/admin");
+  11 |   return (
+  12 |     <section>
+ GET /admin 200 in 182ms
+ GET /admin/posts/things/edit 200 in 179ms
+Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at RootLayout (src/app/layout.tsx:30:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+ GET /admin 200 in 36ms
+Error: Route "/admin/posts/[slug]/edit" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at RootLayout (src/app/layout.tsx:30:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+Error: Route "/admin/posts/[slug]/edit" used `params.slug`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at EditPostPage (src/app/admin/posts/[slug]/edit/page.tsx:9:43)
+   7 |   const session = await getSession();
+   8 |   if (!session.user) redirect("/login");
+>  9 |   const post = await getPostBySlug(params.slug);
+     |                                           ^
+  10 |   if (!post) redirect("/admin");
+  11 |   return (
+  12 |     <section>
+ GET /admin/posts/things/edit 200 in 51ms
+Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at RootLayout (src/app/layout.tsx:30:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+ GET /admin 200 in 53ms
+Error: Route "/admin/posts/[slug]/edit" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at RootLayout (src/app/layout.tsx:30:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+Error: Route "/admin/posts/[slug]/edit" used `params.slug`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at EditPostPage (src/app/admin/posts/[slug]/edit/page.tsx:9:43)
+   7 |   const session = await getSession();
+   8 |   if (!session.user) redirect("/login");
+>  9 |   const post = await getPostBySlug(params.slug);
+     |                                           ^
+  10 |   if (!post) redirect("/admin");
+  11 |   return (
+  12 |     <section>
+ GET /admin/posts/things/edit 200 in 52ms
+Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at RootLayout (src/app/layout.tsx:30:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+ GET /admin 200 in 56ms
+Error: Route "/admin/posts/[slug]/edit" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at RootLayout (src/app/layout.tsx:30:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+Error: Route "/admin/posts/[slug]/edit" used `params.slug`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at EditPostPage (src/app/admin/posts/[slug]/edit/page.tsx:9:43)
+   7 |   const session = await getSession();
+   8 |   if (!session.user) redirect("/login");
+>  9 |   const post = await getPostBySlug(params.slug);
+     |                                           ^
+  10 |   if (!post) redirect("/admin");
+  11 |   return (
+  12 |     <section>
+ GET /admin/posts/things/edit 200 in 57ms
+Error: Route "/admin/posts/[slug]/edit" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at RootLayout (src/app/layout.tsx:30:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at RootLayout (src/app/layout.tsx:30:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+Error: Route "/admin/posts/[slug]/edit" used `params.slug`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at EditPostPage (src/app/admin/posts/[slug]/edit/page.tsx:9:43)
+   7 |   const session = await getSession();
+   8 |   if (!session.user) redirect("/login");
+>  9 |   const post = await getPostBySlug(params.slug);
+     |                                           ^
+  10 |   if (!post) redirect("/admin");
+  11 |   return (
+  12 |     <section>
+ ✓ Compiled in 5ms
+ GET /admin/posts/things/edit 200 in 70ms
+ GET /admin 200 in 76ms
+ ✓ Compiled in 3ms
+ ✓ Compiled /admin in 19ms
+Error: Route "/admin/posts/[slug]/edit" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at RootLayout (src/app/layout.tsx:30:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at RootLayout (src/app/layout.tsx:30:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+Error: Route "/admin/posts/[slug]/edit" used `params.slug`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at EditPostPage (src/app/admin/posts/[slug]/edit/page.tsx:9:43)
+   7 |   const session = await getSession();
+   8 |   if (!session.user) redirect("/login");
+>  9 |   const post = await getPostBySlug(params.slug);
+     |                                           ^
+  10 |   if (!post) redirect("/admin");
+  11 |   return (
+  12 |     <section>
+ GET /admin/posts/things/edit 200 in 185ms
+ GET /admin 200 in 188ms
+Error: Route "/admin/posts/[slug]/edit" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at RootLayout (src/app/layout.tsx:30:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at RootLayout (src/app/layout.tsx:30:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+Error: Route "/admin/posts/[slug]/edit" used `params.slug`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at EditPostPage (src/app/admin/posts/[slug]/edit/page.tsx:9:43)
+   7 |   const session = await getSession();
+   8 |   if (!session.user) redirect("/login");
+>  9 |   const post = await getPostBySlug(params.slug);
+     |                                           ^
+  10 |   if (!post) redirect("/admin");
+  11 |   return (
+  12 |     <section>
+ GET /admin/posts/things/edit 200 in 69ms
+ GET /admin 200 in 79ms
+Error: Route "/admin/posts/[slug]/edit" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at RootLayout (src/app/layout.tsx:30:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+Error: Route "/admin/posts/[slug]/edit" used `params.slug`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at EditPostPage (src/app/admin/posts/[slug]/edit/page.tsx:9:43)
+   7 |   const session = await getSession();
+   8 |   if (!session.user) redirect("/login");
+>  9 |   const post = await getPostBySlug(params.slug);
+     |                                           ^
+  10 |   if (!post) redirect("/admin");
+  11 |   return (
+  12 |     <section>
+Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at RootLayout (src/app/layout.tsx:30:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+ GET /admin/posts/things/edit 200 in 105ms
+ GET /admin 200 in 108ms
+Error: Route "/admin/posts/[slug]/edit" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at RootLayout (src/app/layout.tsx:30:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+Error: Route "/admin" used `cookies().get('davessite_session')`. `cookies()` should be awaited before using its value. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at getSession (src/lib/session.ts:19:39)
+    at RootLayout (src/app/layout.tsx:30:35)
+  17 |
+  18 | export async function getSession() {
+> 19 |   const session = await getIronSession<SessionData>(cookies(), sessionOptions);
+     |                                       ^
+  20 |   return session;
+  21 | }
+  22 |
+Error: Route "/admin/posts/[slug]/edit" used `params.slug`. `params` should be awaited before using its properties. Learn more: https://nextjs.org/docs/messages/sync-dynamic-apis
+    at EditPostPage (src/app/admin/posts/[slug]/edit/page.tsx:9:43)
+   7 |   const session = await getSession();
+   8 |   if (!session.user) redirect("/login");
+>  9 |   const post = await getPostBySlug(params.slug);
+     |                                           ^
+  10 |   if (!post) redirect("/admin");
+  11 |   return (
+  12 |     <section>
+ GET /admin/posts/things/edit 200 in 85ms
+ GET /admin 200 in 87ms
+ ✓ Compiled in 9ms
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.3qavbineyo2'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.3qavbineyo2'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.usffy5nrz8m'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.usffy5nrz8m'
+}
+ ✓ Compiled in 6ms
+ ○ Compiling /admin ...
+ ✓ Compiled /admin in 535ms
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.kjrbgxbtx8'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.kjrbgxbtx8'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.8wv3ynnwrhe'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.8wv3ynnwrhe'
+}
+[Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.3qavbineyo2'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.3qavbineyo2'
+}
+[Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.usffy5nrz8m'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.usffy5nrz8m'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.48zc89byjm4'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.48zc89byjm4'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.lm8ie73a2'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.lm8ie73a2'
+}
+[Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.jg97i6tl1wo'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.jg97i6tl1wo'
+}
+[Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.nbj3j32t2ve'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.nbj3j32t2ve'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.sqpmu6bh3ds'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.sqpmu6bh3ds'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.u7ia8strcs'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.u7ia8strcs'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.df2lxflf5s9'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.df2lxflf5s9'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.o2fn67ph9s'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.o2fn67ph9s'
+}
+[Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.sqpmu6bh3ds'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.sqpmu6bh3ds'
+}
+[Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.u7ia8strcs'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.u7ia8strcs'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.evlc2exglea'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.evlc2exglea'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.8nbgu6xdkde'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.8nbgu6xdkde'
+}
+[Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.i7u8894cj5d'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.i7u8894cj5d'
+}
+[Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.044duvu2suwu'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.044duvu2suwu'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.3j98x684rxc'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.3j98x684rxc'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.b2oneyf302k'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.b2oneyf302k'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.vpzg75pdk4'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.vpzg75pdk4'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.gue96daw9zo'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.gue96daw9zo'
+}
+[Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.3j98x684rxc'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.3j98x684rxc'
+}
+[Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.b2oneyf302k'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.b2oneyf302k'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.6hcyzeezsb'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.6hcyzeezsb'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.3scffr3yi2'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.3scffr3yi2'
+}
+[Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.2k2k0w1pse8'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.2k2k0w1pse8'
+}
+[Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.f7jgo9oroxb'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.f7jgo9oroxb'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.zgoo6ektx4l'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.zgoo6ektx4l'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.215idc988pph'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.215idc988pph'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.i0t4dpg7ju'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.i0t4dpg7ju'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.8y5qke8f1j7'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.8y5qke8f1j7'
+}
+[Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.zgoo6ektx4l'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.zgoo6ektx4l'
+}
+[Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.215idc988pph'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.215idc988pph'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.w3i8dv6xgc'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.w3i8dv6xgc'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.03grfig7fks3'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.03grfig7fks3'
+}
+[Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.04sjy2k9jt4m'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.04sjy2k9jt4m'
+}
+[Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.37ntqiqtiye'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.37ntqiqtiye'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.obf28xbxbz'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.obf28xbxbz'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.f1ao10e64vj'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.f1ao10e64vj'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.u9c8esr0uh'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.u9c8esr0uh'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.2v31crry68q'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.2v31crry68q'
+}
+[Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.obf28xbxbz'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.obf28xbxbz'
+}
+[Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.f1ao10e64vj'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.f1ao10e64vj'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.owlfr58ptai'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.owlfr58ptai'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.91kh6hg7hs'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.91kh6hg7hs'
+}
+[Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.u3e162gtxtk'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.u3e162gtxtk'
+}
+[Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.r5brqnsmq1n'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.r5brqnsmq1n'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.ea1i2iqfx9'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.ea1i2iqfx9'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.q09y0a3wip9'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.q09y0a3wip9'
+}
+ ✓ Compiled in 30ms

@@ -14,7 +14,7 @@ export type PostRow = {
 
 export default function AdminPostsTable({ initialPosts }: { initialPosts: PostRow[] }) {
   const [posts, setPosts] = useState(initialPosts);
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
   const router = useRouter();
 
   async function onDelete(slug: string) {

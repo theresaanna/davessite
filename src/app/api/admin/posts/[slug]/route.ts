@@ -1,17 +1,18 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/session";
 import { removePost, updateMarkdownPost, updatePostStatus } from "@/lib/posts";
 import TurndownService from "turndown";
 
 export async function DELETE(
-  _req: Request,
-  { params }: { params: { slug: string } }
+  _req: NextRequest,
+  context: { params: Promise<{ slug: string }> }
 ) {
+  const { slug } = await context.params;
   const session = await getSession();
   if (!session.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const ok = await removePost(params.slug);
+  const ok = await removePost(slug);
   if (!ok) {
     return NextResponse.json({ error: "Not found" }, { status: 404 });
   }
@@ -19,9 +20,10 @@ export async function DELETE(
 }
 
 export async function PUT(
-  req: Request,
-  { params }: { params: { slug: string } }
+  req: NextRequest,
+  context: { params: Promise<{ slug: string }> }
 ) {
+  const { slug: prevSlug } = await context.params;
   const session = await getSession();
   if (!session.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -44,14 +46,15 @@ export async function PUT(
     replacement: (_content: string, node: unknown) => (node as { outerHTML?: string }).outerHTML || ''
   });
   const markdown = turndown.turndown(html as string);
-  const saved = await updateMarkdownPost({ prevSlug: params.slug, title, slug, markdown, status });
+  const saved = await updateMarkdownPost({ prevSlug, title, slug, markdown, status });
   return NextResponse.json({ ok: true, slug: saved.slug });
 }
 
 export async function PATCH(
-  req: Request,
-  { params }: { params: { slug: string } }
+  req: NextRequest,
+  context: { params: Promise<{ slug: string }> }
 ) {
+  const { slug } = await context.params;
   const session = await getSession();
   if (!session.user) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -60,7 +63,7 @@ export async function PATCH(
   if (status !== "draft" && status !== "published") {
     return NextResponse.json({ error: "Invalid status" }, { status: 400 });
   }
-  const ok = await updatePostStatus(params.slug, status);
+  const ok = await updatePostStatus(slug, status);
   if (!ok) return NextResponse.json({ error: "Not found" }, { status: 404 });
   return NextResponse.json({ ok: true });
 }
