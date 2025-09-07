@@ -65,8 +65,11 @@ body {
 .site-nav a {
   color: var(--color-text);
 }
-.site-nav a:hover {
+ .site-nav a:hover {
   color: var(--color-accent);
+}
+.auth-controls button:hover {
+  background: #f8fafc;
 }
 
 /* Main & Footer */

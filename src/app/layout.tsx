@@ -19,16 +19,20 @@ export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"),
 };
 
-export default function RootLayout({
+import AuthControls from "@/components/AuthControls";
+import { getSession } from "@/lib/session";
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await getSession();
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
         <header className="site-header">
-          <div className="container">
+          <div className="container" style={{ gap: "1rem" }}>
             <h1 className="site-title">
               <Link href="/">Dave's Site</Link>
             </h1>
@@ -45,6 +49,9 @@ export default function RootLayout({
                 </li>
               </ul>
             </nav>
+            <div className="auth-controls">
+              <AuthControls user={session.user ?? null} />
+            </div>
           </div>
         </header>
         <main className="site-main container">{children}</main>

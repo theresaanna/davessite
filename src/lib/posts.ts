@@ -81,3 +81,13 @@ export async function saveMarkdownPost({
   return { slug: finalSlug, path: filePath };
 }
 
+export async function removePost(slug: string): Promise<boolean> {
+  const filePath = path.join(postsDir, `${slug}.md`);
+  try {
+    await fs.unlink(filePath);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
