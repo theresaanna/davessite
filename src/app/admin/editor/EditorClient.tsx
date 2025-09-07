@@ -84,7 +84,7 @@ export default function EditorClient({
   const draftKey = useMemo(() => (initialSlug ? `editor-draft-${initialSlug}` : "editor-draft-new"), [initialSlug]);
 
   // Autosave draft on changes (debounced)
-  const [autoTimer, setAutoTimer] = useState<NodeJS.Timeout | null>(null);
+  const [autoTimer, setAutoTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
 
   const onSaveDraft = useCallback(async () => {
     if (!title || !editor) return;
@@ -118,11 +118,11 @@ export default function EditorClient({
 
   const scheduleAutosave = useCallback(() => {
     if (!title || !editor) return;
-    if (autoTimer) clearTimeout(autoTimer as any);
+    if (autoTimer) clearTimeout(autoTimer);
     const t = setTimeout(() => {
       onSaveDraft();
     }, 1500);
-    setAutoTimer(t as any);
+    setAutoTimer(t);
   }, [title, editor, autoTimer, onSaveDraft]);
 
   // Also autosave when the title changes
@@ -161,8 +161,9 @@ export default function EditorClient({
       if (data.url) {
         editor?.chain().focus().setImage({ src: data.url }).run();
       }
-    } catch (err: any) {
-      setError(err.message || 'Upload failed');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Upload failed';
+      setError(msg);
     } finally {
       setUploadingImage(false);
     }
@@ -201,8 +202,7 @@ export default function EditorClient({
     const style = styleParts.join(';');
 
     // Remember position after the image so we can insert a caption without replacing the image
-    const sel: any = (editor as any).state.selection;
-    const insertPos = sel?.to ?? null;
+    const insertPos = (editor.state as any).selection?.to ?? null;
 
     editor.chain().focus().updateAttributes('image', { alt, style }).run();
     if (caption && caption.trim().length > 0) {
@@ -246,8 +246,9 @@ export default function EditorClient({
         try { localStorage.removeItem(draftKey); } catch {}
       }
       router.prefetch(`/blog/${data.slug}`);
-    } catch (e: any) {
-      setError(e.message || "Publish failed");
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "Publish failed";
+      setError(msg);
     } finally {
       setSaving(false);
     }

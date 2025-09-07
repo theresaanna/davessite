@@ -7,6 +7,7 @@ import remarkRehype from "remark-rehype";
 import rehypeRaw from "rehype-raw";
 import rehypeStringify from "rehype-stringify";
 import { visit } from "unist-util-visit";
+import type { Root, Element, Parent } from "hast";
 
 export type PostMeta = {
   title: string;
@@ -28,8 +29,10 @@ export function slugify(input: string) {
 
 function normalizeDate(value: unknown): string | undefined {
   if (!value) return undefined;
-  const d = new Date(value as any);
-  if (isNaN(d.getTime())) return undefined;
+  let d: Date | null = null;
+  if (value instanceof Date) d = value;
+  else if (typeof value === "string" || typeof value === "number") d = new Date(value);
+  if (!d || isNaN(d.getTime())) return undefined;
   return d.toISOString();
 }
 
@@ -48,12 +51,12 @@ export async function getAllPostsMeta(opts?: { includeDrafts?: boolean }): Promi
     const raw = await fs.readFile(full, "utf8");
     const { data } = matter(raw);
     const slug = file.replace(/\.md$/, "");
-    const status = ((data as any).status as any) || "published";
+    const status = (data as { status?: "draft" | "published" }).status ?? "published";
     if (!includeDrafts && status !== "published") continue;
     metas.push({
       title: (data.title as string) || slug,
       slug,
-      date: normalizeDate((data as any).date),
+      date: normalizeDate((data as { date?: string | number | Date }).date),
       status,
     });
   }
@@ -72,20 +75,21 @@ export async function getPostBySlug(slug: string): Promise<{ meta: PostMeta; htm
       .use(remarkRehype, { allowDangerousHtml: true })
       .use(rehypeRaw)
       .use(function rehypeWrapImages() {
-        return (tree: any) => {
-          visit(tree, 'element', (node: any, index: number | null, parent: any) => {
+        return (tree: Root) => {
+          visit(tree, 'element', (node: Element, index: number | null, parent: Parent | null) => {
             if (!node || node.tagName !== 'img' || !parent || typeof index !== 'number') return;
             // If already wrapped in a link, skip
-            if (parent.tagName === 'a') return;
-            const src = node.properties?.src;
+            if ((parent as Element).tagName === 'a') return;
+            const props = (node.properties ?? {}) as { src?: string };
+            const src = props.src;
             if (!src) return;
-            const link = {
+            const link: Element = {
               type: 'element',
               tagName: 'a',
               properties: { href: src, target: '_blank', rel: 'noopener noreferrer' },
               children: [node],
             };
-            parent.children[index] = link;
+            (parent.children as Element[])[index] = link;
           });
         };
       })
@@ -95,8 +99,8 @@ export async function getPostBySlug(slug: string): Promise<{ meta: PostMeta; htm
     const meta: PostMeta = {
       title: (data.title as string) || slug,
       slug,
-      date: normalizeDate((data as any).date),
-      status: ((data as any).status as any) || "published",
+      date: normalizeDate((data as { date?: string | number | Date }).date),
+      status: (data as { status?: "draft" | "published" }).status ?? "published",
     };
     return { meta, html: contentHtml, markdown: content };
   } catch {
@@ -141,13 +145,13 @@ export async function updateMarkdownPost({
   const newSlug = slug && slug.length > 0 ? slugify(slug) : slugify(title);
   const prevPath = path.join(postsDir, `${prevSlug}.md`);
   const newPath = path.join(postsDir, `${newSlug}.md`);
-  let data: any = { title, slug: newSlug };
+  let data: Record<string, unknown> = { title, slug: newSlug };
   let content = markdown;
   try {
     const raw = await fs.readFile(prevPath, "utf8");
     const parsed = matter(raw);
-    data = { ...parsed.data, title, slug: newSlug };
-    content = markdown ?? parsed.content;
+    data = { ...(parsed.data as Record<string, unknown>), title, slug: newSlug };
+    content = markdown ?? (parsed.content as string);
   } catch {}
   if (status) {
     data.status = status;
@@ -155,7 +159,7 @@ export async function updateMarkdownPost({
       data.date = new Date().toISOString();
     }
   }
-  const file = matter.stringify(content, data);
+  const file = matter.stringify(content, data as Record<string, unknown>);
   if (prevSlug !== newSlug) {
     await fs.writeFile(newPath, file, "utf8");
     try { await fs.unlink(prevPath); } catch {}
@@ -184,7 +188,7 @@ export async function updatePostStatus(slug: string, status: "draft" | "publishe
     if (status === "published" && !data.date) {
       data.date = new Date().toISOString();
     }
-    const file = matter.stringify(parsed.content, data);
+  const file = matter.stringify(parsed.content as string, data as Record<string, unknown>);
     await fs.writeFile(filePath, file, "utf8");
     return true;
   } catch {
