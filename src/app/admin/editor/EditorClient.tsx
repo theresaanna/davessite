@@ -7,14 +7,6 @@ import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
 import { useEffect } from "react";
 
-function AutoSaveWatcher({ onChange, deps }: { onChange: () => void; deps: any[] }) {
-  useEffect(() => {
-    onChange();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, deps);
-  return null;
-}
-
 function slugify(input: string) {
   return input
     .toLowerCase()
@@ -51,15 +43,17 @@ export default function EditorClient({
     content: initialHTML,
     autofocus: true,
     immediatelyRender: false,
+    onUpdate() {
+      scheduleAutosave();
+    },
   });
 
-  const html = useMemo(() => editor?.getHTML() ?? "", [editor, editor?.state]);
+  const html = useMemo(() => editor?.getHTML() ?? "", [editor]);
   const computedSlug = useMemo(() => (title ? slugify(title) : initialSlug || ""), [title, initialSlug]);
   const draftKey = useMemo(() => (initialSlug ? `editor-draft-${initialSlug}` : "editor-draft-new"), [initialSlug]);
 
   // Autosave draft on changes (debounced)
   const [autoTimer, setAutoTimer] = useState<NodeJS.Timeout | null>(null);
-  const contentSnapshot = useMemo(() => ({ title, html }), [title, html]);
 
   const onSaveDraft = useCallback(async () => {
     if (!title || !editor) return;
@@ -99,6 +93,12 @@ export default function EditorClient({
     }, 1500);
     setAutoTimer(t as any);
   }, [title, editor, autoTimer, onSaveDraft]);
+
+  // Also autosave when the title changes
+  useEffect(() => {
+    scheduleAutosave();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [title]);
 
   // Load any locally saved draft on mount/editor ready
   useEffect(() => {
@@ -187,9 +187,6 @@ export default function EditorClient({
       >
         {editor && <EditorContent editor={editor} />}
       </div>
-
-      {/* Trigger autosave when content changes */}
-      <AutoSaveWatcher onChange={scheduleAutosave} deps={[contentSnapshot]} />
 
       <div style={{ marginTop: "1rem", display: "flex", gap: "0.5rem", alignItems: "center" }}>
         <button
