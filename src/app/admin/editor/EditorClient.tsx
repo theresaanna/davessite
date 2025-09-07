@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
+import Underline from "@tiptap/extension-underline";
+import Image from "@tiptap/extension-image";
 import { useEffect } from "react";
 
 function slugify(input: string) {
@@ -14,6 +16,28 @@ function slugify(input: string) {
     .trim()
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-");
+}
+
+function ToolButton({ active, onClick, children }: { active?: boolean; onClick: () => void; children: React.ReactNode }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      style={{
+        border: active ? "1px solid var(--color-accent)" : "1px solid var(--color-border)",
+        background: active ? "#eef2ff" : "#fff",
+        color: "var(--color-text)",
+        borderRadius: 4,
+        padding: "0.25rem 0.5rem",
+      }}
+    >
+      {children}
+    </button>
+  );
+}
+
+function Separator() {
+  return <span style={{ width: 1, background: "var(--color-border)", alignSelf: "stretch" }} />;
 }
 
 export default function EditorClient({
@@ -38,7 +62,9 @@ export default function EditorClient({
   const editor = useEditor({
     extensions: [
       StarterKit,
-      Link.configure({ openOnClick: true }),
+      Link.configure({ openOnClick: true, autolink: true, linkOnPaste: true }),
+      Underline,
+      Image.configure({ inline: false, allowBase64: true })
     ],
     content: initialHTML,
     autofocus: true,
@@ -180,6 +206,38 @@ export default function EditorClient({
       {mode === "create" && (
         <div style={{ color: "var(--color-muted)", fontSize: 12, margin: "-0.25rem 0 0.5rem" }}>
           Note: autosave runs only after you add a title.
+        </div>
+      )}
+
+      {/* Toolbar */}
+      {editor && (
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 8 }}>
+          <ToolButton active={editor.isActive('bold')} onClick={() => editor.chain().focus().toggleBold().run()}>B</ToolButton>
+          <ToolButton active={editor.isActive('italic')} onClick={() => editor.chain().focus().toggleItalic().run()}><i>I</i></ToolButton>
+          <ToolButton active={editor.isActive('underline')} onClick={() => editor.chain().focus().toggleUnderline().run()}><u>U</u></ToolButton>
+          <Separator />
+          <ToolButton active={editor.isActive('heading', { level: 2 })} onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}>H2</ToolButton>
+          <ToolButton active={editor.isActive('heading', { level: 3 })} onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}>H3</ToolButton>
+          <Separator />
+          <ToolButton active={editor.isActive('bulletList')} onClick={() => editor.chain().focus().toggleBulletList().run()}>• List</ToolButton>
+          <ToolButton active={editor.isActive('orderedList')} onClick={() => editor.chain().focus().toggleOrderedList().run()}>1. List</ToolButton>
+          <Separator />
+          <ToolButton active={editor.isActive('blockquote')} onClick={() => editor.chain().focus().toggleBlockquote().run()}>&ldquo;Quote&rdquo;</ToolButton>
+          <Separator />
+          <ToolButton active={editor.isActive('link')} onClick={() => {
+            const href = window.prompt('Enter URL', editor.getAttributes('link').href || 'https://');
+            if (href === null) return; // cancel
+            if (href === '') { editor.chain().focus().unsetLink().run(); return; }
+            editor.chain().focus().extendMarkRange('link').setLink({ href, target: '_blank' }).run();
+          }}>Link</ToolButton>
+          <ToolButton onClick={() => {
+            const src = window.prompt('Image URL (https://...)');
+            if (!src) return;
+            editor.chain().focus().setImage({ src }).run();
+          }}>Image</ToolButton>
+          <Separator />
+          <ToolButton onClick={() => editor.chain().focus().undo().run()}>Undo</ToolButton>
+          <ToolButton onClick={() => editor.chain().focus().redo().run()}>Redo</ToolButton>
         </div>
       )}
 
