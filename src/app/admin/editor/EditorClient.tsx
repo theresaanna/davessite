@@ -7,6 +7,7 @@ import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
 import Underline from "@tiptap/extension-underline";
 import Image from "@tiptap/extension-image";
+import Blockquote from "@tiptap/extension-blockquote";
 import { useEffect } from "react";
 
 function slugify(input: string) {
@@ -18,11 +19,12 @@ function slugify(input: string) {
     .replace(/-+/g, "-");
 }
 
-function ToolButton({ active, onClick, children }: { active?: boolean; onClick: () => void; children: React.ReactNode }) {
+function ToolButton({ active, onClick, children, title }: { active?: boolean; onClick: () => void; children: React.ReactNode; title?: string }) {
   return (
     <button
       type="button"
       onClick={onClick}
+      title={title}
       style={{
         border: active ? "1px solid var(--color-accent)" : "1px solid var(--color-border)",
         background: active ? "#eef2ff" : "#fff",
@@ -66,7 +68,8 @@ export default function EditorClient({
       StarterKit,
       Link.configure({ openOnClick: true, autolink: true, linkOnPaste: true }),
       Underline,
-      Image.configure({ inline: false, allowBase64: true })
+      Image.configure({ inline: false, allowBase64: true }),
+      Blockquote,
     ],
     content: initialHTML,
     autofocus: true,
@@ -143,6 +146,28 @@ export default function EditorClient({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [editor, draftKey]);
 
+  const uploadImageFile = useCallback(async (file: File) => {
+    setUploadingImage(true);
+    setError(null);
+    try {
+      const body = new FormData();
+      body.append('file', file);
+      const res = await fetch('/api/admin/upload', { method: 'POST', body });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || `Upload failed (${res.status})`);
+      }
+      const data = await res.json();
+      if (data.url) {
+        editor?.chain().focus().setImage({ src: data.url }).run();
+      }
+    } catch (err: any) {
+      setError(err.message || 'Upload failed');
+    } finally {
+      setUploadingImage(false);
+    }
+  }, [editor]);
+
   const onPublish = useCallback(async () => {
     if (!title || !editor) return;
     setSaving(true);
@@ -217,33 +242,33 @@ export default function EditorClient({
       {/* Toolbar */}
       {editor && (
         <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 8 }}>
-          <ToolButton active={editor.isActive('bold')} onClick={() => editor.chain().focus().toggleBold().run()}>B</ToolButton>
-          <ToolButton active={editor.isActive('italic')} onClick={() => editor.chain().focus().toggleItalic().run()}><i>I</i></ToolButton>
-          <ToolButton active={editor.isActive('underline')} onClick={() => editor.chain().focus().toggleUnderline().run()}><u>U</u></ToolButton>
+          <ToolButton title="Bold (Cmd/Ctrl+B)" active={editor.isActive('bold')} onClick={() => editor.chain().focus().toggleBold().run()}>B</ToolButton>
+          <ToolButton title="Italic (Cmd/Ctrl+I)" active={editor.isActive('italic')} onClick={() => editor.chain().focus().toggleItalic().run()}><i>I</i></ToolButton>
+          <ToolButton title="Underline" active={editor.isActive('underline')} onClick={() => editor.chain().focus().toggleUnderline().run()}><u>U</u></ToolButton>
           <Separator />
-          <ToolButton active={editor.isActive('heading', { level: 2 })} onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}>H2</ToolButton>
-          <ToolButton active={editor.isActive('heading', { level: 3 })} onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}>H3</ToolButton>
+          <ToolButton title="Heading 2" active={editor.isActive('heading', { level: 2 })} onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}>H2</ToolButton>
+          <ToolButton title="Heading 3" active={editor.isActive('heading', { level: 3 })} onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}>H3</ToolButton>
           <Separator />
-          <ToolButton active={editor.isActive('bulletList')} onClick={() => editor.chain().focus().toggleBulletList().run()}>• List</ToolButton>
-          <ToolButton active={editor.isActive('orderedList')} onClick={() => editor.chain().focus().toggleOrderedList().run()}>1. List</ToolButton>
+          <ToolButton title="Bulleted list" active={editor.isActive('bulletList')} onClick={() => editor.chain().focus().toggleBulletList().run()}>• List</ToolButton>
+          <ToolButton title="Numbered list" active={editor.isActive('orderedList')} onClick={() => editor.chain().focus().toggleOrderedList().run()}>1. List</ToolButton>
           <Separator />
-          <ToolButton active={editor.isActive('blockquote')} onClick={() => editor.chain().focus().toggleBlockquote().run()}>&ldquo;Quote&rdquo;</ToolButton>
+          <ToolButton title="Blockquote" active={editor.isActive('blockquote')} onClick={() => editor.chain().focus().toggleBlockquote().run()}>&ldquo;Quote&rdquo;</ToolButton>
           <Separator />
-          <ToolButton active={editor.isActive('link')} onClick={() => {
+          <ToolButton title="Add/Remove link" active={editor.isActive('link')} onClick={() => {
             const href = window.prompt('Enter URL', editor.getAttributes('link').href || 'https://');
             if (href === null) return; // cancel
             if (href === '') { editor.chain().focus().unsetLink().run(); return; }
             editor.chain().focus().extendMarkRange('link').setLink({ href, target: '_blank' }).run();
           }}>Link</ToolButton>
-          <ToolButton onClick={() => {
+          <ToolButton title="Insert image by URL" onClick={() => {
             const src = window.prompt('Image URL (https://...)');
             if (!src) return;
             editor.chain().focus().setImage({ src }).run();
           }}>Image URL</ToolButton>
-          <ToolButton onClick={() => fileInputRef.current?.click()}>{uploadingImage ? 'Uploading…' : 'Upload Image'}</ToolButton>
+          <ToolButton title="Upload image" onClick={() => fileInputRef.current?.click()}>{uploadingImage ? 'Uploading…' : 'Upload Image'}</ToolButton>
           <Separator />
-          <ToolButton onClick={() => editor.chain().focus().undo().run()}>Undo</ToolButton>
-          <ToolButton onClick={() => editor.chain().focus().redo().run()}>Redo</ToolButton>
+          <ToolButton title="Undo (Cmd/Ctrl+Z)" onClick={() => editor.chain().focus().undo().run()}>Undo</ToolButton>
+          <ToolButton title="Redo (Cmd/Ctrl+Shift+Z)" onClick={() => editor.chain().focus().redo().run()}>Redo</ToolButton>
         </div>
       )}
 
@@ -255,30 +280,35 @@ export default function EditorClient({
         onChange={async (e) => {
           const file = e.currentTarget.files?.[0];
           if (!file) return;
-          setUploadingImage(true);
-          setError(null);
-          try {
-            const body = new FormData();
-            body.append('file', file);
-            const res = await fetch('/api/admin/upload', { method: 'POST', body });
-            if (!res.ok) {
-              const data = await res.json().catch(() => ({}));
-              throw new Error(data.error || `Upload failed (${res.status})`);
-            }
-            const data = await res.json();
-            if (data.url) {
-              editor?.chain().focus().setImage({ src: data.url }).run();
-            }
-          } catch (err: any) {
-            setError(err.message || 'Upload failed');
-          } finally {
-            setUploadingImage(false);
-            e.currentTarget.value = '';
-          }
+          await uploadImageFile(file);
+          e.currentTarget.value = '';
         }}
       />
 
       <div
+        onPaste={async (e) => {
+          if (!e.clipboardData) return;
+          const files = Array.from(e.clipboardData.files).filter(f => f.type.startsWith('image/'));
+          if (files.length === 0) return;
+          e.preventDefault();
+          for (const f of files) {
+            await uploadImageFile(f);
+          }
+        }}
+        onDragOver={(e) => {
+          if (e.dataTransfer && Array.from(e.dataTransfer.types).includes('Files')) {
+            e.preventDefault();
+          }
+        }}
+        onDrop={async (e) => {
+          if (!e.dataTransfer) return;
+          const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+          if (files.length === 0) return;
+          e.preventDefault();
+          for (const f of files) {
+            await uploadImageFile(f);
+          }
+        }}
         style={{
           border: "1px solid var(--color-border)",
           borderRadius: 6,
