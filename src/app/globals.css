@@ -95,6 +95,13 @@ body {
 .editor-surface .ProseMirror blockquote p {
   margin: 0.25rem 0;
 }
+/* Constrain images in editor for usability */
+.editor-surface .ProseMirror img {
+  max-width: 800px;
+  max-height: 700px;
+  height: auto;
+  width: auto;
+}
 
 /* Main & Footer */
 .site-main {

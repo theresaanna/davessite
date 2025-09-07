@@ -6,6 +6,7 @@ import remarkParse from "remark-parse";
 import remarkRehype from "remark-rehype";
 import rehypeRaw from "rehype-raw";
 import rehypeStringify from "rehype-stringify";
+import { visit } from "unist-util-visit";
 
 export type PostMeta = {
   title: string;
@@ -70,6 +71,24 @@ export async function getPostBySlug(slug: string): Promise<{ meta: PostMeta; htm
       .use(remarkParse)
       .use(remarkRehype, { allowDangerousHtml: true })
       .use(rehypeRaw)
+      .use(function rehypeWrapImages() {
+        return (tree: any) => {
+          visit(tree, 'element', (node: any, index: number | null, parent: any) => {
+            if (!node || node.tagName !== 'img' || !parent || typeof index !== 'number') return;
+            // If already wrapped in a link, skip
+            if (parent.tagName === 'a') return;
+            const src = node.properties?.src;
+            if (!src) return;
+            const link = {
+              type: 'element',
+              tagName: 'a',
+              properties: { href: src, target: '_blank', rel: 'noopener noreferrer' },
+              children: [node],
+            };
+            parent.children[index] = link;
+          });
+        };
+      })
       .use(rehypeStringify, { allowDangerousHtml: true })
       .process(content);
     const contentHtml = String(processed);
