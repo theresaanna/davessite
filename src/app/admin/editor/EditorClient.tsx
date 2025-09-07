@@ -58,15 +58,6 @@ export default function EditorClient({
   const [autoTimer, setAutoTimer] = useState<NodeJS.Timeout | null>(null);
   const contentSnapshot = useMemo(() => ({ title, html }), [title, html]);
 
-  const scheduleAutosave = useCallback(() => {
-    if (!title || !editor) return;
-    if (autoTimer) clearTimeout(autoTimer as any);
-    const t = setTimeout(() => {
-      onSaveDraft();
-    }, 1500);
-    setAutoTimer(t as any);
-  }, [title, editor, autoTimer, onSaveDraft]);
-
   const onSaveDraft = useCallback(async () => {
     if (!title || !editor) return;
     try {
@@ -87,6 +78,15 @@ export default function EditorClient({
       if (!res.ok) return; // silent on autosave
     } catch {}
   }, [title, computedSlug, editor, mode, initialSlug]);
+
+  const scheduleAutosave = useCallback(() => {
+    if (!title || !editor) return;
+    if (autoTimer) clearTimeout(autoTimer as any);
+    const t = setTimeout(() => {
+      onSaveDraft();
+    }, 1500);
+    setAutoTimer(t as any);
+  }, [title, editor, autoTimer, onSaveDraft]);
 
   const onPublish = useCallback(async () => {
     if (!title || !editor) return;
