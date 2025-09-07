@@ -15,9 +15,19 @@ function slugify(input: string) {
     .replace(/-+/g, "-");
 }
 
-export default function EditorClient() {
+export default function EditorClient({
+  initialTitle = "",
+  initialHTML = "<p>Write your post here…</p>",
+  initialSlug = "",
+  mode = "create",
+}: {
+  initialTitle?: string;
+  initialHTML?: string;
+  initialSlug?: string;
+  mode?: "create" | "edit";
+}) {
   const router = useRouter();
-  const [title, setTitle] = useState("");
+  const [title, setTitle] = useState(initialTitle);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -27,13 +37,13 @@ export default function EditorClient() {
       StarterKit,
       Link.configure({ openOnClick: true }),
     ],
-    content: "<p>Write your post here…</p>",
+    content: initialHTML,
     autofocus: true,
     immediatelyRender: false,
   });
 
   const html = useMemo(() => editor?.getHTML() ?? "", [editor, editor?.state]);
-  const slug = useMemo(() => (title ? slugify(title) : ""), [title]);
+  const computedSlug = useMemo(() => (title ? slugify(title) : initialSlug || ""), [title, initialSlug]);
 
   const onSave = useCallback(async () => {
     if (!title || !editor) return;
@@ -41,30 +51,41 @@ export default function EditorClient() {
     setError(null);
     setSuccess(null);
     try {
-      const res = await fetch("/api/admin/posts", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, slug, html: editor.getHTML() }),
-      });
+      let res: Response;
+      if (mode === "edit" && initialSlug) {
+        res = await fetch(`/api/admin/posts/${initialSlug}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title, slug: computedSlug, html: editor.getHTML() }),
+        });
+      } else {
+        res = await fetch("/api/admin/posts", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ title, slug: computedSlug, html: editor.getHTML() }),
+        });
+      }
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.error || `Save failed (${res.status})`);
+        throw new Error(data.error || `${mode === "edit" ? "Update" : "Save"} failed (${res.status})`);
       }
       const data = await res.json();
-      setSuccess(`Saved as ${data.slug}.md`);
-      setTitle("");
-      editor.commands.setContent("<p>Write your next post here…</p>");
+      setSuccess(`${mode === "edit" ? "Updated" : "Saved"} as ${data.slug}.md`);
+      if (mode === "create") {
+        setTitle("");
+        editor.commands.setContent("<p>Write your next post here…</p>");
+      }
       router.prefetch(`/blog/${data.slug}`);
     } catch (e: any) {
       setError(e.message || "Save failed");
     } finally {
       setSaving(false);
     }
-  }, [title, slug, editor, router]);
+  }, [title, computedSlug, editor, router, mode, initialSlug]);
 
   return (
     <section>
-      <h2>New Post</h2>
+      <h2>{mode === "edit" ? "Edit Post" : "New Post"}</h2>
       <div style={{ margin: "1rem 0" }}>
         <label>
           Title
@@ -83,7 +104,7 @@ export default function EditorClient() {
           />
         </label>
         <div style={{ color: "var(--color-muted)", marginTop: 4 }}>
-          Slug: {slug || "(auto)"}
+          Slug: {computedSlug || "(auto)"}
         </div>
       </div>
 
@@ -111,7 +132,7 @@ export default function EditorClient() {
             cursor: saving || !title ? "not-allowed" : "pointer",
           }}
         >
-          {saving ? "Saving…" : "Save post"}
+          {saving ? (mode === "edit" ? "Updating…" : "Saving…") : (mode === "edit" ? "Update post" : "Save post")}
         </button>
         {success && <span style={{ color: "#16a34a" }}>{success}</span>}
         {error && <span style={{ color: "#b91c1c" }}>{error}</span>}

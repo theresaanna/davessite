@@ -88,6 +88,34 @@ export async function saveMarkdownPost({
   return { slug: finalSlug, path: filePath };
 }
 
+export async function updateMarkdownPost({
+  prevSlug,
+  title,
+  slug,
+  markdown,
+}: {
+  prevSlug: string;
+  title: string;
+  slug?: string;
+  markdown: string;
+}): Promise<{ slug: string; path: string }> {
+  await ensurePostsDir();
+  const newSlug = slug && slug.length > 0 ? slugify(slug) : slugify(title);
+  const newPath = path.join(postsDir, `${newSlug}.md`);
+  const now = new Date().toISOString();
+  const file = matter.stringify(markdown, { title, date: now, slug: newSlug });
+  if (prevSlug !== newSlug) {
+    // Write new file and remove old one
+    await fs.writeFile(newPath, file, "utf8");
+    try {
+      await fs.unlink(path.join(postsDir, `${prevSlug}.md`));
+    } catch {}
+  } else {
+    await fs.writeFile(newPath, file, "utf8");
+  }
+  return { slug: newSlug, path: newPath };
+}
+
 export async function removePost(slug: string): Promise<boolean> {
   const filePath = path.join(postsDir, `${slug}.md`);
   try {

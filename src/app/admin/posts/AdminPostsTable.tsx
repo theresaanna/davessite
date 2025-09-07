@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { formatDate } from "@/lib/date";
 
 export type PostRow = {
   title: string;
@@ -49,14 +50,17 @@ export default function AdminPostsTable({ initialPosts }: { initialPosts: PostRo
                 <tr key={p.slug}>
                   <td style={td}><Link href={`/blog/${p.slug}`}>{p.title}</Link></td>
                   <td style={td}><code>{p.slug}</code></td>
-                  <td style={td}><span style={{ color: "var(--color-muted)" }}>{p.date || ""}</span></td>
+                  <td style={td}><span style={{ color: "var(--color-muted)" }}>{formatDate(p.date)}</span></td>
                   <td style={td}>
-                    <button
-                      onClick={() => onDelete(p.slug)}
-                      style={{ border: "1px solid #ef4444", color: "#ef4444", background: "transparent", padding: "0.25rem 0.5rem", borderRadius: 4 }}
-                    >
-                      Delete
-                    </button>
+                    <div style={{ display: "flex", gap: 8 }}>
+                      <Link href={`/admin/posts/${p.slug}/edit`} style={{ border: "1px solid var(--color-border)", padding: "0.25rem 0.5rem", borderRadius: 4 }}>Edit</Link>
+                      <button
+                        onClick={() => onDelete(p.slug)}
+                        style={{ border: "1px solid #ef4444", color: "#ef4444", background: "transparent", padding: "0.25rem 0.5rem", borderRadius: 4 }}
+                      >
+                        Delete
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))}
