@@ -8,6 +8,7 @@ export type PostMeta = {
   title: string;
   slug: string;
   date?: string;
+  status?: "draft" | "published";
 };
 
 const postsDir = path.join(process.cwd(), "content", "posts");
@@ -32,7 +33,8 @@ export async function ensurePostsDir() {
   await fs.mkdir(postsDir, { recursive: true });
 }
 
-export async function getAllPostsMeta(): Promise<PostMeta[]> {
+export async function getAllPostsMeta(opts?: { includeDrafts?: boolean }): Promise<PostMeta[]> {
+  const includeDrafts = !!opts?.includeDrafts;
   await ensurePostsDir();
   const files = await fs.readdir(postsDir);
   const mdFiles = files.filter((f) => f.endsWith(".md"));
@@ -42,17 +44,20 @@ export async function getAllPostsMeta(): Promise<PostMeta[]> {
     const raw = await fs.readFile(full, "utf8");
     const { data } = matter(raw);
     const slug = file.replace(/\.md$/, "");
+    const status = ((data as any).status as any) || "published";
+    if (!includeDrafts && status !== "published") continue;
     metas.push({
       title: (data.title as string) || slug,
       slug,
       date: normalizeDate((data as any).date),
+      status,
     });
   }
   metas.sort((a, b) => (b.date || "").localeCompare(a.date || ""));
   return metas;
 }
 
-export async function getPostBySlug(slug: string): Promise<{ meta: PostMeta; html: string } | null> {
+export async function getPostBySlug(slug: string): Promise<{ meta: PostMeta; html: string; markdown: string } | null> {
   const filePath = path.join(postsDir, `${slug}.md`);
   try {
     const raw = await fs.readFile(filePath, "utf8");
@@ -63,8 +68,9 @@ export async function getPostBySlug(slug: string): Promise<{ meta: PostMeta; htm
       title: (data.title as string) || slug,
       slug,
       date: normalizeDate((data as any).date),
+      status: ((data as any).status as any) || "published",
     };
-    return { meta, html: contentHtml };
+    return { meta, html: contentHtml, markdown: content };
   } catch {
     return null;
   }
@@ -74,16 +80,18 @@ export async function saveMarkdownPost({
   title,
   slug,
   markdown,
+  status = "draft",
 }: {
   title: string;
   slug?: string;
   markdown: string;
+  status?: "draft" | "published";
 }): Promise<{ slug: string; path: string }> {
   await ensurePostsDir();
   const finalSlug = slug && slug.length > 0 ? slugify(slug) : slugify(title);
   const filePath = path.join(postsDir, `${finalSlug}.md`);
   const now = new Date().toISOString();
-  const file = matter.stringify(markdown, { title, date: now, slug: finalSlug });
+  const file = matter.stringify(markdown, { title, date: now, slug: finalSlug, status });
   await fs.writeFile(filePath, file, "utf8");
   return { slug: finalSlug, path: filePath };
 }
@@ -93,23 +101,36 @@ export async function updateMarkdownPost({
   title,
   slug,
   markdown,
+  status,
 }: {
   prevSlug: string;
   title: string;
   slug?: string;
   markdown: string;
+  status?: "draft" | "published";
 }): Promise<{ slug: string; path: string }> {
   await ensurePostsDir();
   const newSlug = slug && slug.length > 0 ? slugify(slug) : slugify(title);
+  const prevPath = path.join(postsDir, `${prevSlug}.md`);
   const newPath = path.join(postsDir, `${newSlug}.md`);
-  const now = new Date().toISOString();
-  const file = matter.stringify(markdown, { title, date: now, slug: newSlug });
+  let data: any = { title, slug: newSlug };
+  let content = markdown;
+  try {
+    const raw = await fs.readFile(prevPath, "utf8");
+    const parsed = matter(raw);
+    data = { ...parsed.data, title, slug: newSlug };
+    content = markdown ?? parsed.content;
+  } catch {}
+  if (status) {
+    data.status = status;
+    if (status === "published" && !data.date) {
+      data.date = new Date().toISOString();
+    }
+  }
+  const file = matter.stringify(content, data);
   if (prevSlug !== newSlug) {
-    // Write new file and remove old one
     await fs.writeFile(newPath, file, "utf8");
-    try {
-      await fs.unlink(path.join(postsDir, `${prevSlug}.md`));
-    } catch {}
+    try { await fs.unlink(prevPath); } catch {}
   } else {
     await fs.writeFile(newPath, file, "utf8");
   }
@@ -120,6 +141,23 @@ export async function removePost(slug: string): Promise<boolean> {
   const filePath = path.join(postsDir, `${slug}.md`);
   try {
     await fs.unlink(filePath);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export async function updatePostStatus(slug: string, status: "draft" | "published"): Promise<boolean> {
+  const filePath = path.join(postsDir, `${slug}.md`);
+  try {
+    const raw = await fs.readFile(filePath, "utf8");
+    const parsed = matter(raw);
+    const data: any = { ...parsed.data, status };
+    if (status === "published" && !data.date) {
+      data.date = new Date().toISOString();
+    }
+    const file = matter.stringify(parsed.content, data);
+    await fs.writeFile(filePath, file, "utf8");
     return true;
   } catch {
     return false;

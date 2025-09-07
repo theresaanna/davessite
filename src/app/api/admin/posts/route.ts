@@ -9,7 +9,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { title, slug, html } = await req.json();
+  const { title, slug, html, status } = await req.json();
   if (!title || !html) {
     return NextResponse.json({ error: "Missing title or html" }, { status: 400 });
   }
@@ -17,7 +17,7 @@ export async function POST(req: Request) {
   const turndown = new TurndownService({ headingStyle: "atx" });
   const markdown = turndown.turndown(html as string);
 
-  const saved = await saveMarkdownPost({ title, slug, markdown });
+  const saved = await saveMarkdownPost({ title, slug, markdown, status: status || "draft" });
   return NextResponse.json({ ok: true, slug: saved.slug });
 }
 

@@ -21,7 +21,7 @@ export default function AuthControls({ user }: { user: { username: string } | nu
 
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-      <span style={{ color: "var(--color-muted)" }}>Hi, {user.username}</span>
+      <Link href="/admin" style={{ color: "var(--color-muted)" }}>Hi, {user.username}</Link>
       <button
         onClick={logout}
         style={{

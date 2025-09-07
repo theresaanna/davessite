@@ -11,6 +11,7 @@ export async function generateStaticParams() {
 export default async function BlogPostPage({ params }: { params: { slug: string } }) {
   const post = await getPostBySlug(params.slug);
   if (!post) return notFound();
+  if (post.meta.status !== "published") return notFound();
   return (
     <article>
       <h2>{post.meta.title}</h2>

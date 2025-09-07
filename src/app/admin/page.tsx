@@ -9,7 +9,7 @@ export default async function AdminPage() {
   if (!session.user) {
     redirect("/login");
   }
-  const posts = await getAllPostsMeta();
+  const posts = await getAllPostsMeta({ includeDrafts: true });
   return (
     <section>
       <EditorClient />
