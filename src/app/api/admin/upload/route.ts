@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/session";
-import path from "node:path";
-import fs from "node:fs/promises";
+import { put } from "@vercel/blob";
 
 export async function POST(req: Request) {
   const session = await getSession();
@@ -23,17 +22,12 @@ export async function POST(req: Request) {
   const bytes = await file.arrayBuffer();
   const buffer = Buffer.from(bytes);
 
-  const uploadsDir = path.join(process.cwd(), "public", "uploads");
-  await fs.mkdir(uploadsDir, { recursive: true });
-
   const safeBase = (file.name || "upload").replace(/[^a-zA-Z0-9_.-]/g, "_");
   const stamp = Date.now();
-  const filename = `${stamp}-${safeBase}`;
-  const outPath = path.join(uploadsDir, filename);
+  const key = `uploads/${stamp}-${safeBase}`;
 
-  await fs.writeFile(outPath, buffer);
+  const blob = await put(key, buffer, { access: "public", contentType: file.type });
 
-  const url = `/uploads/${filename}`;
-  return NextResponse.json({ ok: true, url });
+  return NextResponse.json({ ok: true, url: blob.url });
 }
 

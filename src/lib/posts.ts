@@ -8,6 +8,7 @@ import rehypeRaw from "rehype-raw";
 import rehypeStringify from "rehype-stringify";
 import { visit } from "unist-util-visit";
 import type { Root, Element, Parent } from "hast";
+import { list, put as blobPut, del as blobDel } from "@vercel/blob";
 
 export type PostMeta = {
   title: string;
@@ -17,6 +18,8 @@ export type PostMeta = {
 };
 
 const postsDir = path.join(process.cwd(), "content", "posts");
+
+const useBlob = !!process.env.BLOB_READ_WRITE_TOKEN || !!process.env.VERCEL;
 
 export function slugify(input: string) {
   return input
@@ -42,32 +45,59 @@ export async function ensurePostsDir() {
 
 export async function getAllPostsMeta(opts?: { includeDrafts?: boolean }): Promise<PostMeta[]> {
   const includeDrafts = !!opts?.includeDrafts;
-  await ensurePostsDir();
-  const files = await fs.readdir(postsDir);
-  const mdFiles = files.filter((f) => f.endsWith(".md"));
   const metas: PostMeta[] = [];
-  for (const file of mdFiles) {
-    const full = path.join(postsDir, file);
-    const raw = await fs.readFile(full, "utf8");
-    const { data } = matter(raw);
-    const slug = file.replace(/\.md$/, "");
-    const status = (data as { status?: "draft" | "published" }).status ?? "published";
-    if (!includeDrafts && status !== "published") continue;
-    metas.push({
-      title: (data.title as string) || slug,
-      slug,
-      date: normalizeDate((data as { date?: string | number | Date }).date),
-      status,
-    });
+  if (useBlob) {
+    const { blobs } = await list({ prefix: "posts/" });
+    for (const b of blobs) {
+      if (!b.pathname.endsWith(".md")) continue;
+      const slug = b.pathname.replace(/^posts\//, "").replace(/\.md$/, "");
+      const raw = await fetch(b.url).then((r) => r.text());
+      const { data } = matter(raw);
+      const status = (data as { status?: "draft" | "published" }).status ?? "published";
+      if (!includeDrafts && status !== "published") continue;
+      metas.push({
+        title: (data.title as string) || slug,
+        slug,
+        date: normalizeDate((data as { date?: string | number | Date }).date),
+        status,
+      });
+    }
+  } else {
+    await ensurePostsDir();
+    const files = await fs.readdir(postsDir);
+    const mdFiles = files.filter((f) => f.endsWith(".md"));
+    for (const file of mdFiles) {
+      const full = path.join(postsDir, file);
+      const raw = await fs.readFile(full, "utf8");
+      const { data } = matter(raw);
+      const slug = file.replace(/\.md$/, "");
+      const status = (data as { status?: "draft" | "published" }).status ?? "published";
+      if (!includeDrafts && status !== "published") continue;
+      metas.push({
+        title: (data.title as string) || slug,
+        slug,
+        date: normalizeDate((data as { date?: string | number | Date }).date),
+        status,
+      });
+    }
   }
   metas.sort((a, b) => (b.date || "").localeCompare(a.date || ""));
   return metas;
 }
 
 export async function getPostBySlug(slug: string): Promise<{ meta: PostMeta; html: string; markdown: string } | null> {
-  const filePath = path.join(postsDir, `${slug}.md`);
   try {
-    const raw = await fs.readFile(filePath, "utf8");
+    const raw = await (async () => {
+      if (useBlob) {
+        const { blobs } = await list({ prefix: `posts/${slug}.md` });
+        const b = blobs.find((x) => x.pathname === `posts/${slug}.md`);
+        if (!b) throw new Error("not found");
+        return await fetch(b.url).then((r) => r.text());
+      } else {
+        const filePath = path.join(postsDir, `${slug}.md`);
+        return await fs.readFile(filePath, "utf8");
+      }
+    })();
     const { data, content } = matter(raw);
     // Render Markdown to HTML while allowing embedded raw HTML (for images/captions)
     const processed = await remark()
@@ -120,13 +150,19 @@ export async function saveMarkdownPost({
   markdown: string;
   status?: "draft" | "published";
 }): Promise<{ slug: string; path: string }> {
-  await ensurePostsDir();
   const finalSlug = slug && slug.length > 0 ? slugify(slug) : slugify(title);
-  const filePath = path.join(postsDir, `${finalSlug}.md`);
   const now = new Date().toISOString();
   const file = matter.stringify(markdown, { title, date: now, slug: finalSlug, status });
-  await fs.writeFile(filePath, file, "utf8");
-  return { slug: finalSlug, path: filePath };
+  if (useBlob) {
+    const key = `posts/${finalSlug}.md`;
+    await blobPut(key, file, { access: "public", contentType: "text/markdown" });
+    return { slug: finalSlug, path: key };
+  } else {
+    await ensurePostsDir();
+    const filePath = path.join(postsDir, `${finalSlug}.md`);
+    await fs.writeFile(filePath, file, "utf8");
+    return { slug: finalSlug, path: filePath };
+  }
 }
 
 export async function updateMarkdownPost({
@@ -142,55 +178,76 @@ export async function updateMarkdownPost({
   markdown: string;
   status?: "draft" | "published";
 }): Promise<{ slug: string; path: string }> {
-  await ensurePostsDir();
   const newSlug = slug && slug.length > 0 ? slugify(slug) : slugify(title);
-  const prevPath = path.join(postsDir, `${prevSlug}.md`);
-  const newPath = path.join(postsDir, `${newSlug}.md`);
   let data: Record<string, unknown> = { title, slug: newSlug };
   let content = markdown;
   try {
-    const raw = await fs.readFile(prevPath, "utf8");
-    const parsed = matter(raw);
-    data = { ...(parsed.data as Record<string, unknown>), title, slug: newSlug };
-    content = markdown ?? (parsed.content as string);
+    const existing = await getPostBySlug(prevSlug);
+    if (existing) {
+      const parsed = matter(existing.markdown);
+      data = { ...(parsed.data as Record<string, unknown>), title, slug: newSlug };
+      content = markdown ?? (parsed.content as string);
+    }
   } catch {}
   if (status) {
-    data.status = status;
-    if (status === "published" && !data.date) {
-      data.date = new Date().toISOString();
+    (data as { status?: string }).status = status;
+    if (status === "published" && !(data as { date?: string }).date) {
+      (data as { date?: string }).date = new Date().toISOString();
     }
   }
   const file = matter.stringify(content, data as Record<string, unknown>);
-  if (prevSlug !== newSlug) {
-    await fs.writeFile(newPath, file, "utf8");
-    try { await fs.unlink(prevPath); } catch {}
+  if (useBlob) {
+    const newKey = `posts/${newSlug}.md`;
+    await blobPut(newKey, file, { access: "public", contentType: "text/markdown" });
+    if (prevSlug !== newSlug) {
+      try { await blobDel(`posts/${prevSlug}.md`); } catch {}
+    }
+    return { slug: newSlug, path: newKey };
   } else {
-    await fs.writeFile(newPath, file, "utf8");
+    await ensurePostsDir();
+    const prevPath = path.join(postsDir, `${prevSlug}.md`);
+    const newPath = path.join(postsDir, `${newSlug}.md`);
+    if (prevSlug !== newSlug) {
+      await fs.writeFile(newPath, file, "utf8");
+      try { await fs.unlink(prevPath); } catch {}
+    } else {
+      await fs.writeFile(newPath, file, "utf8");
+    }
+    return { slug: newSlug, path: newPath };
   }
-  return { slug: newSlug, path: newPath };
 }
 
 export async function removePost(slug: string): Promise<boolean> {
-  const filePath = path.join(postsDir, `${slug}.md`);
   try {
-    await fs.unlink(filePath);
-    return true;
+    if (useBlob) {
+      await blobDel(`posts/${slug}.md`);
+      return true;
+    } else {
+      const filePath = path.join(postsDir, `${slug}.md`);
+      await fs.unlink(filePath);
+      return true;
+    }
   } catch {
     return false;
   }
 }
 
 export async function updatePostStatus(slug: string, status: "draft" | "published"): Promise<boolean> {
-  const filePath = path.join(postsDir, `${slug}.md`);
   try {
-    const raw = await fs.readFile(filePath, "utf8");
-    const parsed = matter(raw);
+    const existing = await getPostBySlug(slug);
+    if (!existing) return false;
+    const parsed = matter(existing.markdown);
     const data: Record<string, unknown> = { ...(parsed.data as Record<string, unknown>), status };
-    if (status === "published" && !data.date) {
-      data.date = new Date().toISOString();
+    if (status === "published" && !(data as { date?: string }).date) {
+      (data as { date?: string }).date = new Date().toISOString();
     }
     const file = matter.stringify(parsed.content as string, data as Record<string, unknown>);
-    await fs.writeFile(filePath, file, "utf8");
+    if (useBlob) {
+      await blobPut(`posts/${slug}.md`, file, { access: "public", contentType: "text/markdown" });
+    } else {
+      const filePath = path.join(postsDir, `${slug}.md`);
+      await fs.writeFile(filePath, file, "utf8");
+    }
     return true;
   } catch {
     return false;

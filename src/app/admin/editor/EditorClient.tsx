@@ -69,7 +69,7 @@ export default function EditorClient({
       Link.configure({ openOnClick: true, autolink: true, linkOnPaste: true }),
       Underline,
       Image.configure({ inline: false, allowBase64: true }),
-      Blockquote,
+      // Blockquote is included in StarterKit; avoid duplicate extension warning
     ],
     content: initialHTML,
     autofocus: true,
