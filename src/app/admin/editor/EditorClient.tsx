@@ -200,9 +200,19 @@ export default function EditorClient({
     }
     const style = styleParts.join(';');
 
+    // Remember position after the image so we can insert a caption without replacing the image
+    const sel: any = (editor as any).state.selection;
+    const insertPos = sel?.to ?? null;
+
     editor.chain().focus().updateAttributes('image', { alt, style }).run();
     if (caption && caption.trim().length > 0) {
-      editor.chain().focus().insertContent(`<p class="image-caption">${caption}</p>`).run();
+      const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      const safeCaption = esc(caption);
+      if (typeof insertPos === 'number') {
+        editor.chain().focus().setTextSelection(insertPos).insertContent(`<p class=\"image-caption\">${safeCaption}</p>`).run();
+      } else {
+        editor.chain().focus().insertContent(`<p class=\"image-caption\">${safeCaption}</p>`).run();
+      }
     }
   }, [editor]);
 
