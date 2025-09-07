@@ -3,6 +3,9 @@ import Link from "next/link";
 import { getPostBySlug } from "@/lib/posts";
 import { formatDate } from "@/lib/date";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export async function generateStaticParams() {
   // Optional: could list slugs; skipping for simplicity (dynamic rendering)
   return [];

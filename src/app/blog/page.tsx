@@ -2,6 +2,9 @@ import Link from "next/link";
 import { getAllPostsMeta } from "@/lib/posts";
 import { formatDate } from "@/lib/date";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export const metadata = {
   title: "Blog — Dave's Site",
 };

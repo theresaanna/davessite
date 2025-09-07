@@ -26,7 +26,11 @@ export async function POST(req: Request) {
   const stamp = Date.now();
   const key = `uploads/${stamp}-${safeBase}`;
 
-  const blob = await put(key, buffer, { access: "public", contentType: file.type });
+  const token = process.env.BLOB_READ_WRITE_TOKEN;
+  if (!token) {
+    return NextResponse.json({ error: "Missing BLOB_READ_WRITE_TOKEN env var for uploads" }, { status: 500 });
+  }
+  const blob = await put(key, buffer, { access: "public", contentType: file.type, token });
 
   return NextResponse.json({ ok: true, url: blob.url });
 }

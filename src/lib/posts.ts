@@ -19,7 +19,8 @@ export type PostMeta = {
 
 const postsDir = path.join(process.cwd(), "content", "posts");
 
-const useBlob = !!process.env.BLOB_READ_WRITE_TOKEN || !!process.env.VERCEL;
+const blobToken = process.env.BLOB_READ_WRITE_TOKEN;
+const useBlob = !!blobToken;
 
 export function slugify(input: string) {
   return input
@@ -47,7 +48,7 @@ export async function getAllPostsMeta(opts?: { includeDrafts?: boolean }): Promi
   const includeDrafts = !!opts?.includeDrafts;
   const metas: PostMeta[] = [];
   if (useBlob) {
-    const { blobs } = await list({ prefix: "posts/" });
+    const { blobs } = await list({ prefix: "posts/", token: blobToken });
     for (const b of blobs) {
       if (!b.pathname.endsWith(".md")) continue;
       const slug = b.pathname.replace(/^posts\//, "").replace(/\.md$/, "");
@@ -89,7 +90,7 @@ export async function getPostBySlug(slug: string): Promise<{ meta: PostMeta; htm
   try {
     const raw = await (async () => {
       if (useBlob) {
-        const { blobs } = await list({ prefix: `posts/${slug}.md` });
+        const { blobs } = await list({ prefix: `posts/${slug}.md`, token: blobToken });
         const b = blobs.find((x) => x.pathname === `posts/${slug}.md`);
         if (!b) throw new Error("not found");
         return await fetch(b.url).then((r) => r.text());
@@ -155,7 +156,7 @@ export async function saveMarkdownPost({
   const file = matter.stringify(markdown, { title, date: now, slug: finalSlug, status });
   if (useBlob) {
     const key = `posts/${finalSlug}.md`;
-    await blobPut(key, file, { access: "public", contentType: "text/markdown" });
+    await blobPut(key, file, { access: "public", contentType: "text/markdown", token: blobToken });
     return { slug: finalSlug, path: key };
   } else {
     await ensurePostsDir();
@@ -198,9 +199,9 @@ export async function updateMarkdownPost({
   const file = matter.stringify(content, data as Record<string, unknown>);
   if (useBlob) {
     const newKey = `posts/${newSlug}.md`;
-    await blobPut(newKey, file, { access: "public", contentType: "text/markdown" });
+    await blobPut(newKey, file, { access: "public", contentType: "text/markdown", token: blobToken });
     if (prevSlug !== newSlug) {
-      try { await blobDel(`posts/${prevSlug}.md`); } catch {}
+      try { await blobDel(`posts/${prevSlug}.md`, { token: blobToken }); } catch {}
     }
     return { slug: newSlug, path: newKey };
   } else {
@@ -220,7 +221,7 @@ export async function updateMarkdownPost({
 export async function removePost(slug: string): Promise<boolean> {
   try {
     if (useBlob) {
-      await blobDel(`posts/${slug}.md`);
+      await blobDel(`posts/${slug}.md`, { token: blobToken });
       return true;
     } else {
       const filePath = path.join(postsDir, `${slug}.md`);
@@ -243,7 +244,7 @@ export async function updatePostStatus(slug: string, status: "draft" | "publishe
     }
     const file = matter.stringify(parsed.content as string, data as Record<string, unknown>);
     if (useBlob) {
-      await blobPut(`posts/${slug}.md`, file, { access: "public", contentType: "text/markdown" });
+      await blobPut(`posts/${slug}.md`, file, { access: "public", contentType: "text/markdown", token: blobToken });
     } else {
       const filePath = path.join(postsDir, `${slug}.md`);
       await fs.writeFile(filePath, file, "utf8");
