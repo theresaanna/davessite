@@ -21,6 +21,13 @@ export function slugify(input: string) {
     .replace(/-+/g, "-");
 }
 
+function normalizeDate(value: unknown): string | undefined {
+  if (!value) return undefined;
+  const d = new Date(value as any);
+  if (isNaN(d.getTime())) return undefined;
+  return d.toISOString();
+}
+
 export async function ensurePostsDir() {
   await fs.mkdir(postsDir, { recursive: true });
 }
@@ -38,7 +45,7 @@ export async function getAllPostsMeta(): Promise<PostMeta[]> {
     metas.push({
       title: (data.title as string) || slug,
       slug,
-      date: data.date as string | undefined,
+      date: normalizeDate((data as any).date),
     });
   }
   metas.sort((a, b) => (b.date || "").localeCompare(a.date || ""));
@@ -55,7 +62,7 @@ export async function getPostBySlug(slug: string): Promise<{ meta: PostMeta; htm
     const meta: PostMeta = {
       title: (data.title as string) || slug,
       slug,
-      date: data.date as string | undefined,
+      date: normalizeDate((data as any).date),
     };
     return { meta, html: contentHtml };
   } catch {
