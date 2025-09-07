@@ -168,6 +168,21 @@ export default function EditorClient({
     }
   }, [editor]);
 
+  const [showImagePanel, setShowImagePanel] = useState(false);
+  const [imgAlt, setImgAlt] = useState("");
+  const [imgWidth, setImgWidth] = useState("100%");
+  const [imgAlign, setImgAlign] = useState<"left"|"center"|"right">("center");
+  const [imgCaption, setImgCaption] = useState("");
+
+  useEffect(() => {
+    if (!showImagePanel || !editor) return;
+    const attrs = editor.getAttributes('image') || {};
+    setImgAlt(attrs.alt || "");
+    const currentStyle: string = attrs.style || "";
+    const widthMatch = /width:\s*([^;]+)/.exec(currentStyle);
+    setImgWidth(widthMatch ? widthMatch[1].trim() : "100%");
+  }, [showImagePanel, editor]);
+
   const openImageSettings = useCallback(() => {
     if (!editor) return;
     if (!editor.isActive('image')) {
@@ -314,7 +329,7 @@ export default function EditorClient({
             editor.chain().focus().setImage({ src }).run();
           }}>Image URL</ToolButton>
           <ToolButton title="Upload image" onClick={() => fileInputRef.current?.click()}>{uploadingImage ? 'Uploading…' : 'Upload Image'}</ToolButton>
-          <ToolButton title="Image settings (alt, caption, size, align)" onClick={() => openImageSettings()}>Image settings</ToolButton>
+          <ToolButton title="Image settings (alt, caption, size, align)" onClick={() => setShowImagePanel((v) => !v)}>Image settings</ToolButton>
           <Separator />
           <ToolButton title="Undo (Cmd/Ctrl+Z)" onClick={() => editor.chain().focus().undo().run()}>Undo</ToolButton>
           <ToolButton title="Redo (Cmd/Ctrl+Shift+Z)" onClick={() => editor.chain().focus().redo().run()}>Redo</ToolButton>
@@ -339,6 +354,48 @@ export default function EditorClient({
           }
         }}
       />
+
+      {showImagePanel && (
+        <div style={{ border: "1px solid var(--color-border)", borderRadius: 6, padding: 8, marginBottom: 8, background: "#fff" }}>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+            <label>Alt
+              <input value={imgAlt} onChange={(e) => setImgAlt(e.target.value)} style={{ marginLeft: 4, padding: 4, border: "1px solid var(--color-border)", borderRadius: 4 }} />
+            </label>
+            <label>Width
+              <input value={imgWidth} onChange={(e) => setImgWidth(e.target.value)} placeholder="e.g., 600px or 100%" style={{ marginLeft: 4, padding: 4, border: "1px solid var(--color-border)", borderRadius: 4 }} />
+            </label>
+            <label>Align
+              <select value={imgAlign} onChange={(e) => setImgAlign(e.target.value as any)} style={{ marginLeft: 4, padding: 4, border: "1px solid var(--color-border)", borderRadius: 4 }}>
+                <option value="left">left</option>
+                <option value="center">center</option>
+                <option value="right">right</option>
+              </select>
+            </label>
+            <label>Caption
+              <input value={imgCaption} onChange={(e) => setImgCaption(e.target.value)} style={{ marginLeft: 4, padding: 4, border: "1px solid var(--color-border)", borderRadius: 4, minWidth: 240 }} />
+            </label>
+            <button type="button" onClick={() => {
+              // Apply
+              const styleParts: string[] = [];
+              if (imgWidth) styleParts.push(`width:${imgWidth}`);
+              if (imgAlign === 'center') { styleParts.push('display:block','margin-left:auto','margin-right:auto'); }
+              else if (imgAlign === 'right') { styleParts.push('float:right','margin:0 0 1rem 1rem'); }
+              else if (imgAlign === 'left') { styleParts.push('float:left','margin:0 1rem 1rem 0'); }
+              const style = styleParts.join(';');
+              const selTo = (editor.state as import('@tiptap/pm/state').EditorState).selection?.to ?? null;
+              editor.chain().focus().updateAttributes('image', { alt: imgAlt, style }).run();
+              if (imgCaption.trim()) {
+                const esc = (s: string) => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+                const cap = esc(imgCaption.trim());
+                if (typeof selTo === 'number') editor.chain().focus().setTextSelection(selTo).insertContent(`<p class=\"image-caption\">${cap}</p>`).run();
+                else editor.chain().focus().insertContent(`<p class=\"image-caption\">${cap}</p>`).run();
+              }
+              setShowImagePanel(false);
+              setImgCaption("");
+            }} style={{ padding: "6px 10px", border: "1px solid var(--color-border)", borderRadius: 4 }}>Apply</button>
+          </div>
+        </div>
+      )}
 
       <div
         className="editor-surface"

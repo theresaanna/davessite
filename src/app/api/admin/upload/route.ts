@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/session";
-import { put } from "@vercel/blob";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
 export async function POST(req: Request) {
   const session = await getSession();
@@ -26,12 +26,28 @@ export async function POST(req: Request) {
   const stamp = Date.now();
   const key = `uploads/${stamp}-${safeBase}`;
 
-  const token = process.env.BLOB_READ_WRITE_TOKEN;
-  if (!token) {
-    return NextResponse.json({ error: "Missing BLOB_READ_WRITE_TOKEN env var for uploads" }, { status: 500 });
+  const bucket = process.env.AWS_S3_BUCKET;
+  const region = process.env.AWS_S3_REGION;
+  const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
+  const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
+  if (!bucket || !region || !accessKeyId || !secretAccessKey) {
+    return NextResponse.json({ error: "Missing AWS S3 env vars" }, { status: 500 });
   }
-  const blob = await put(key, buffer, { access: "public", contentType: file.type, token });
 
-  return NextResponse.json({ ok: true, url: blob.url });
+  const s3 = new S3Client({
+    region,
+    credentials: { accessKeyId, secretAccessKey },
+  });
+  await s3.send(new PutObjectCommand({
+    Bucket: bucket,
+    Key: key,
+    Body: buffer,
+    ContentType: file.type,
+    ACL: "public-read",
+  }));
+
+  const publicBase = process.env.AWS_S3_PUBLIC_BASE_URL || `https://${bucket}.s3.${region}.amazonaws.com`;
+  const url = `${publicBase}/${key}`;
+  return NextResponse.json({ ok: true, url });
 }
 
