@@ -8,7 +8,7 @@ import rehypeRaw from "rehype-raw";
 import rehypeStringify from "rehype-stringify";
 import { visit } from "unist-util-visit";
 import type { Root, Element, Parent } from "hast";
-import { S3Client, ListObjectsV2Command, GetObjectCommand, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
+import { list, put as blobPut, del as blobDel } from "@vercel/blob";
 
 export type PostMeta = {
   title: string;
@@ -19,19 +19,8 @@ export type PostMeta = {
 
 const postsDir = path.join(process.cwd(), "content", "posts");
 
-const bucket = process.env.AWS_S3_BUCKET;
-const region = process.env.AWS_S3_REGION;
-const accessKeyId = process.env.AWS_ACCESS_KEY_ID;
-const secretAccessKey = process.env.AWS_SECRET_ACCESS_KEY;
-const publicBase = process.env.AWS_S3_PUBLIC_BASE_URL || (bucket && region ? `https://${bucket}.s3.${region}.amazonaws.com` : undefined);
-const useS3 = !!(bucket && region && accessKeyId && secretAccessKey);
-
-function s3Client() {
-  return new S3Client({
-    region: region!,
-    credentials: { accessKeyId: accessKeyId!, secretAccessKey: secretAccessKey! },
-  });
-}
+const blobToken = process.env.BLOB_READ_WRITE_TOKEN;
+const useBlob = !!blobToken;
 
 export function slugify(input: string) {
   return input
@@ -58,16 +47,12 @@ export async function ensurePostsDir() {
 export async function getAllPostsMeta(opts?: { includeDrafts?: boolean }): Promise<PostMeta[]> {
   const includeDrafts = !!opts?.includeDrafts;
   const metas: PostMeta[] = [];
-  if (useS3) {
-    const s3 = s3Client();
-    const resp = await s3.send(new ListObjectsV2Command({ Bucket: bucket!, Prefix: "posts/" }));
-    const contents = resp.Contents || [];
-    for (const obj of contents) {
-      const key = obj.Key || "";
-      if (!key.endsWith(".md")) continue;
-      const slug = key.replace(/^posts\//, "").replace(/\.md$/, "");
-      const get = await s3.send(new GetObjectCommand({ Bucket: bucket!, Key: key }));
-      const raw = await (get.Body as any).transformToString();
+  if (useBlob) {
+    const { blobs } = await list({ prefix: "posts/", token: blobToken });
+    for (const b of blobs) {
+      if (!b.pathname.endsWith(".md")) continue;
+      const slug = b.pathname.replace(/^posts\//, "").replace(/\.md$/, "");
+      const raw = await fetch(b.url).then((r) => r.text());
       const { data } = matter(raw);
       const status = (data as { status?: "draft" | "published" }).status ?? "published";
       if (!includeDrafts && status !== "published") continue;
@@ -104,11 +89,11 @@ export async function getAllPostsMeta(opts?: { includeDrafts?: boolean }): Promi
 export async function getPostBySlug(slug: string): Promise<{ meta: PostMeta; html: string; markdown: string } | null> {
   try {
     const raw = await (async () => {
-      if (useS3) {
-        const s3 = s3Client();
-        const key = `posts/${slug}.md`;
-        const get = await s3.send(new GetObjectCommand({ Bucket: bucket!, Key: key }));
-        return await (get.Body as any).transformToString();
+      if (useBlob) {
+        const { blobs } = await list({ prefix: `posts/${slug}.md`, token: blobToken });
+        const b = blobs.find((x) => x.pathname === `posts/${slug}.md`);
+        if (!b) throw new Error("not found");
+        return await fetch(b.url).then((r) => r.text());
       } else {
         const filePath = path.join(postsDir, `${slug}.md`);
         return await fs.readFile(filePath, "utf8");
@@ -169,10 +154,9 @@ export async function saveMarkdownPost({
   const finalSlug = slug && slug.length > 0 ? slugify(slug) : slugify(title);
   const now = new Date().toISOString();
   const file = matter.stringify(markdown, { title, date: now, slug: finalSlug, status });
-  if (useS3) {
+  if (useBlob) {
     const key = `posts/${finalSlug}.md`;
-    const s3 = s3Client();
-    await s3.send(new PutObjectCommand({ Bucket: bucket!, Key: key, Body: file, ContentType: "text/markdown", ACL: "public-read" }));
+    await blobPut(key, file, { access: "public", contentType: "text/markdown", token: blobToken });
     return { slug: finalSlug, path: key };
   } else {
     await ensurePostsDir();
@@ -213,12 +197,11 @@ export async function updateMarkdownPost({
     }
   }
   const file = matter.stringify(content, data as Record<string, unknown>);
-  if (useS3) {
-    const s3 = s3Client();
+  if (useBlob) {
     const newKey = `posts/${newSlug}.md`;
-    await s3.send(new PutObjectCommand({ Bucket: bucket!, Key: newKey, Body: file, ContentType: "text/markdown", ACL: "public-read" }));
+    await blobPut(newKey, file, { access: "public", contentType: "text/markdown", token: blobToken });
     if (prevSlug !== newSlug) {
-      try { await s3.send(new DeleteObjectCommand({ Bucket: bucket!, Key: `posts/${prevSlug}.md` })); } catch {}
+      try { await blobDel(`posts/${prevSlug}.md`, { token: blobToken }); } catch {}
     }
     return { slug: newSlug, path: newKey };
   } else {
@@ -237,9 +220,8 @@ export async function updateMarkdownPost({
 
 export async function removePost(slug: string): Promise<boolean> {
   try {
-    if (useS3) {
-      const s3 = s3Client();
-      await s3.send(new DeleteObjectCommand({ Bucket: bucket!, Key: `posts/${slug}.md` }));
+    if (useBlob) {
+      await blobDel(`posts/${slug}.md`, { token: blobToken });
       return true;
     } else {
       const filePath = path.join(postsDir, `${slug}.md`);
@@ -261,9 +243,8 @@ export async function updatePostStatus(slug: string, status: "draft" | "publishe
       (data as { date?: string }).date = new Date().toISOString();
     }
     const file = matter.stringify(parsed.content as string, data as Record<string, unknown>);
-    if (useS3) {
-      const s3 = s3Client();
-      await s3.send(new PutObjectCommand({ Bucket: bucket!, Key: `posts/${slug}.md`, Body: file, ContentType: "text/markdown", ACL: "public-read" }));
+    if (useBlob) {
+      await blobPut(`posts/${slug}.md`, file, { access: "public", contentType: "text/markdown", token: blobToken });
     } else {
       const filePath = path.join(postsDir, `${slug}.md`);
       await fs.writeFile(filePath, file, "utf8");
