@@ -1,14 +1,28 @@
-import type { Metadata } from "next";
+import Link from "next/link";
+import { getAllPostsMeta } from "@/lib/posts";
 
-export const metadata: Metadata = {
+export const metadata = {
   title: "Blog — Dave's Site",
 };
 
-export default function BlogPage() {
+export default async function BlogPage() {
+  const posts = await getAllPostsMeta();
   return (
     <section>
       <h2>Blog</h2>
-      <p>Coming soon.</p>
+      {posts.length === 0 ? (
+        <p>No posts yet.</p>
+      ) : (
+        <ul>
+          {posts.map((p) => (
+            <li key={p.slug}>
+              <Link href={`/blog/${p.slug}`}>
+                {p.title} {p.date ? <span style={{ color: "var(--color-muted)" }}>({p.date})</span> : null}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
     </section>
   );
 }
