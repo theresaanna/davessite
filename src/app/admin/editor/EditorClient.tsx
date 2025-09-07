@@ -177,6 +177,12 @@ export default function EditorClient({
         </div>
       </div>
 
+      {mode === "create" && (
+        <div style={{ color: "var(--color-muted)", fontSize: 12, margin: "-0.25rem 0 0.5rem" }}>
+          Note: autosave runs only after you add a title.
+        </div>
+      )}
+
       <div
         style={{
           border: "1px solid var(--color-border)",
