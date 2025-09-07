@@ -317,10 +317,12 @@ export default function EditorClient({
         accept="image/*"
         style={{ display: "none" }}
         onChange={async (e) => {
-          const file = e.currentTarget.files?.[0];
+          const inputEl = e.currentTarget;
+          const file = inputEl.files?.[0];
           if (!file) return;
+          // Clear immediately to avoid React synthetic event nulling after await
+          inputEl.value = '';
           await uploadImageFile(file);
-          e.currentTarget.value = '';
         }}
       />
 
