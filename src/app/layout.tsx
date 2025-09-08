@@ -20,14 +20,12 @@ export const metadata: Metadata = {
 };
 
 import AuthControls from "@/components/AuthControls";
-import { getSession } from "@/lib/session";
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const session = await getSession();
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
@@ -50,7 +48,7 @@ export default async function RootLayout({
               </ul>
             </nav>
             <div className="auth-controls">
-              <AuthControls user={session.user ?? null} />
+              <AuthControls />
             </div>
           </div>
         </header>

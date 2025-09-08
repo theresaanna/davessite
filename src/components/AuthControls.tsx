@@ -2,13 +2,38 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
-export default function AuthControls({ user }: { user: { username: string } | null }) {
+export default function AuthControls() {
   const router = useRouter();
+  const [user, setUser] = useState<{ username: string } | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const res = await fetch("/api/me", { cache: "no-store" });
+        if (!res.ok) return;
+        const data = (await res.json()) as { user?: { username: string } | null };
+        if (!cancelled) setUser(data.user ?? null);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   async function logout() {
     await fetch("/api/logout", { method: "POST" });
+    setUser(null);
     router.refresh();
+  }
+
+  if (loading) {
+    return null;
   }
 
   if (!user) {

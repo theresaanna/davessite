@@ -40,6 +40,13 @@ function normalizeDate(value: unknown): string | undefined {
   return d.toISOString();
 }
 
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
 export async function ensurePostsDir() {
   await fs.mkdir(postsDir, { recursive: true });
 }
@@ -101,33 +108,38 @@ export async function getPostBySlug(slug: string): Promise<{ meta: PostMeta; htm
     })();
     const { data, content } = matter(raw);
     // Render Markdown to HTML while allowing embedded raw HTML (for images/captions)
-    const processed = await remark()
-      .use(remarkParse)
-      .use(remarkRehype, { allowDangerousHtml: true })
-      .use(rehypeRaw)
-      .use(function rehypeWrapImages() {
-        return (tree: Root) => {
-          visit(tree, 'element', (node: Element, index: number | undefined, parent: Parent | undefined) => {
-            if (!node || node.tagName !== 'img' || !parent || typeof index !== 'number') return;
-            // If already wrapped in a link, skip
-            const parentEl = parent as unknown as Element;
-            if (parentEl.tagName === 'a') return;
-            const props = (node.properties ?? {}) as { src?: string };
-            const src = props.src;
-            if (!src) return;
-            const link: Element = {
-              type: 'element',
-              tagName: 'a',
-              properties: { href: src, target: '_blank', rel: 'noopener noreferrer' },
-              children: [node],
-            };
-            (parent.children as Element[])[index] = link;
-          });
-        };
-      })
-      .use(rehypeStringify, { allowDangerousHtml: true })
-      .process(content);
-    const contentHtml = String(processed);
+    let contentHtml = "";
+    try {
+      const processed = await remark()
+        .use(remarkParse)
+        .use(remarkRehype, { allowDangerousHtml: true })
+        .use(rehypeRaw)
+        .use(function rehypeWrapImages() {
+          return (tree: Root) => {
+            visit(tree, 'element', (node: Element, index: number | undefined, parent: Parent | undefined) => {
+              if (!node || node.tagName !== 'img' || !parent || typeof index !== 'number') return;
+              // If already wrapped in a link, skip
+              const parentEl = parent as unknown as Element;
+              if (parentEl.tagName === 'a') return;
+              const props = (node.properties ?? {}) as { src?: string };
+              const src = props.src;
+              if (!src) return;
+              const link: Element = {
+                type: 'element',
+                tagName: 'a',
+                properties: { href: src, target: '_blank', rel: 'noopener noreferrer' },
+                children: [node],
+              };
+              (parent.children as Element[])[index] = link;
+            });
+          };
+        })
+        .use(rehypeStringify, { allowDangerousHtml: true })
+        .process(content);
+      contentHtml = String(processed);
+    } catch {
+      contentHtml = `<pre>${escapeHtml(content)}</pre>`;
+    }
     const meta: PostMeta = {
       title: (data.title as string) || slug,
       slug,

@@ -1739,3 +1739,10 @@ Error: Route "/admin/posts/[slug]/edit" used `params.slug`. `params` should be a
  ✓ Compiled in 96ms
  ✓ Compiled in 9ms
  ✓ Compiled in 92ms
+   Reload env: .env.local
+ ✓ Compiled in 13ms
+ ✓ Compiled in 150ms
+ ✓ Compiled in 14ms
+ ✓ Compiled in 13ms
+ ✓ Compiled in 21ms
+ ✓ Compiled in 8ms
