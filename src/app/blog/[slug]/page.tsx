@@ -3,12 +3,7 @@ import Link from "next/link";
 import { getPostBySlug } from "@/lib/posts";
 import { formatDate } from "@/lib/date";
 
-export const revalidate = 60;
-
-export async function generateStaticParams() {
-  // Optional: could list slugs; skipping for simplicity (dynamic rendering)
-  return [];
-}
+export const dynamic = "force-dynamic";
 
 export default async function BlogPostPage({ params }: { params: { slug: string } }) {
   const post = await getPostBySlug(params.slug);
@@ -20,7 +15,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
       {post.meta.date ? (
         <div style={{ color: "var(--color-muted)", marginBottom: 12 }}>{formatDate(post.meta.date)}</div>
       ) : null}
-      <div className="post-content" dangerouslySetInnerHTML={{ __html: post.html }} />
+      <div dangerouslySetInnerHTML={{ __html: post.html }} />
       <div style={{ marginTop: 24 }}>
         <Link href="/blog">← Back to blog</Link>
       </div>
