@@ -101,8 +101,16 @@ main > :last-child {
 }
 
 /* Centered image captions */
-.post-content figure { margin: 1rem 0; }
-.post-content figure > img { margin-bottom: 0.5rem; }
+/* Make figures shrink-wrap to image width and center them */
+.post-content figure {
+  display: table;
+  margin: 1rem auto;
+}
+/* Ensure link-wrapped images inside figures still set the figure width */
+.post-content figure a { display: block; line-height: 0; }
+.post-content figure img { display: block; margin: 0 0 0.5rem; }
+
+/* Caption styling aligned to figure (image) width */
 .post-content figcaption,
 figure figcaption,
 .image-caption {
@@ -111,6 +119,12 @@ figure figcaption,
   font-size: 0.875rem;
   font-style: italic;
   margin: 0.5rem 0 1rem;
+}
+
+/* When an image is not in a figure but is link-wrapped, center a following .image-caption to the image by shrink-wrapping */
+.post-content a:has(> img) + .image-caption {
+  display: table;
+  margin: 0.5rem auto 1rem;
 }
 
 /* Header & Nav */
