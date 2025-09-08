@@ -173,7 +173,7 @@ const Header = () => {
                 letterSpacing: "-0.02em",
                 fontFamily: serifFont
               }}>
-                Dave's Site
+                Dave Todd
               </h1>
               <div style={{
                 fontSize: "0.875rem",

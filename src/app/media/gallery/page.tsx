@@ -334,7 +334,7 @@ export default function GalleryPage() {
               fontSize: "0.75rem"
             }}>
               {/* This is where the actual image would go */}
-              Replace with: Image src="{images[currentIndex].src}"
+              Replace with: Image src=&quot;{images[currentIndex].src}&quot;
             </div>
           </div>
         </div>
