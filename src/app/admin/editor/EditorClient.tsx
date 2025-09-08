@@ -7,7 +7,6 @@ import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
 import Underline from "@tiptap/extension-underline";
 import Image from "@tiptap/extension-image";
-import Blockquote from "@tiptap/extension-blockquote";
 import { useEffect } from "react";
 
 function slugify(input: string) {
@@ -183,52 +182,6 @@ export default function EditorClient({
     setImgWidth(widthMatch ? widthMatch[1].trim() : "100%");
   }, [showImagePanel, editor]);
 
-  const openImageSettings = useCallback(() => {
-    if (!editor) return;
-    if (!editor.isActive('image')) {
-      alert('Place the cursor on an image first.');
-      return;
-    }
-    const attrs = editor.getAttributes('image') || {};
-    const currentAlt = attrs.alt || '';
-    const currentStyle = attrs.style || '';
-    const widthMatch = /width:\s*([^;]+)/.exec(currentStyle);
-    const currentWidth = widthMatch ? widthMatch[1].trim() : '';
-
-    const alt = window.prompt('Alt text (for accessibility):', currentAlt) ?? currentAlt;
-    const caption = window.prompt('Caption (optional):', '') ?? '';
-    const width = window.prompt('Width (e.g., 600px or 100%):', currentWidth || '100%') ?? currentWidth;
-    const align = window.prompt('Align: left | center | right', 'center') ?? 'center';
-
-    const styleParts: string[] = [];
-    if (width) styleParts.push(`width:${width}`);
-    if (align === 'center') {
-      styleParts.push('display:block');
-      styleParts.push('margin-left:auto');
-      styleParts.push('margin-right:auto');
-    } else if (align === 'right') {
-      styleParts.push('float:right');
-      styleParts.push('margin:0 0 1rem 1rem');
-    } else if (align === 'left') {
-      styleParts.push('float:left');
-      styleParts.push('margin:0 1rem 1rem 0');
-    }
-    const style = styleParts.join(';');
-
-    // Remember position after the image so we can insert a caption without replacing the image
-    const insertPos = (editor.state as import('@tiptap/pm/state').EditorState).selection?.to ?? null;
-
-    editor.chain().focus().updateAttributes('image', { alt, style }).run();
-    if (caption && caption.trim().length > 0) {
-      const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-      const safeCaption = esc(caption);
-      if (typeof insertPos === 'number') {
-        editor.chain().focus().setTextSelection(insertPos).insertContent(`<p class=\"image-caption\">${safeCaption}</p>`).run();
-      } else {
-        editor.chain().focus().insertContent(`<p class=\"image-caption\">${safeCaption}</p>`).run();
-      }
-    }
-  }, [editor]);
 
   const onPublish = useCallback(async () => {
     if (!title || !editor) return;
@@ -365,7 +318,7 @@ export default function EditorClient({
               <input value={imgWidth} onChange={(e) => setImgWidth(e.target.value)} placeholder="e.g., 600px or 100%" style={{ marginLeft: 4, padding: 4, border: "1px solid var(--color-border)", borderRadius: 4 }} />
             </label>
             <label>Align
-              <select value={imgAlign} onChange={(e) => setImgAlign(e.target.value as any)} style={{ marginLeft: 4, padding: 4, border: "1px solid var(--color-border)", borderRadius: 4 }}>
+              <select value={imgAlign} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setImgAlign(e.target.value as "left" | "center" | "right")} style={{ marginLeft: 4, padding: 4, border: "1px solid var(--color-border)", borderRadius: 4 }}>
                 <option value="left">left</option>
                 <option value="center">center</option>
                 <option value="right">right</option>
@@ -382,9 +335,9 @@ export default function EditorClient({
               else if (imgAlign === 'right') { styleParts.push('float:right','margin:0 0 1rem 1rem'); }
               else if (imgAlign === 'left') { styleParts.push('float:left','margin:0 1rem 1rem 0'); }
               const style = styleParts.join(';');
-              const selTo = (editor.state as import('@tiptap/pm/state').EditorState).selection?.to ?? null;
-              editor.chain().focus().updateAttributes('image', { alt: imgAlt, style }).run();
-              if (imgCaption.trim()) {
+              const selTo = editor ? ((editor.state as import('@tiptap/pm/state').EditorState).selection?.to ?? null) : null;
+              editor?.chain().focus().updateAttributes('image', { alt: imgAlt, style }).run();
+              if (imgCaption.trim() && editor) {
                 const esc = (s: string) => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
                 const cap = esc(imgCaption.trim());
                 if (typeof selTo === 'number') editor.chain().focus().setTextSelection(selTo).insertContent(`<p class=\"image-caption\">${cap}</p>`).run();
