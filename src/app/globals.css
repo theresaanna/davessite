@@ -84,6 +84,17 @@ main > :last-child {
   margin: 0.25rem 0;
 }
 
+/* More compact line-height for list items */
+.site-main ul li, .site-main ol li,
+.post-content ul li, .post-content ol li {
+  line-height: 1.45;
+}
+/* And for paragraphs inside list items (common in Markdown output) */
+.site-main li p, .post-content li p {
+  line-height: 1.45;
+  margin: 0.125rem 0;
+}
+
 /* Ensure bullets stay outside for better alignment */
 .post-content ul, .post-content ol {
   list-style-position: outside;
