@@ -1,10 +1,12 @@
 To do:
 - Implement button editor for pages that are not the blog
+- Implement user-seen design similar to danielsilvabooks.com
+- Figure out a domain/URL
 
 Done as of 9/8/25:
 - Preview tab for draft posts
 - Ability to preload a draft into the editor for editing
-
+- Beginning of new admin design
 
 Known Bugs and Needed Enhancements:
 - image captions are wonky
