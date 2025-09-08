@@ -90,12 +90,14 @@ export default function EditorClient({
     try {
       let res: Response;
       if ((mode === "edit" || initialSlug) && initialSlug) {
+        // Do not send status when updating to avoid downgrading a published post back to draft
         res = await fetch(`/api/admin/posts/${initialSlug}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ title, slug: computedSlug, html: editor.getHTML(), status: "draft" }),
+          body: JSON.stringify({ title, slug: computedSlug, html: editor.getHTML() }),
         });
       } else {
+        // For new posts, save as draft
         res = await fetch("/api/admin/posts", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
