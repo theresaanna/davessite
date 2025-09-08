@@ -212,6 +212,15 @@ export default function EditorClient({
       if (typeof window !== "undefined") {
         try { localStorage.removeItem(draftKey); } catch {}
       }
+      // trigger immediate revalidation for blog index and the post path
+      try {
+        await fetch('/api/revalidate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ slug: data.slug }),
+        });
+      } catch {}
+
       router.prefetch(`/blog/${data.slug}`);
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "Publish failed";
