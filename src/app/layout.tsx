@@ -20,6 +20,7 @@ export const metadata: Metadata = {
 };
 
 import AuthControls from "@/components/AuthControls";
+import Header from "@/components/Header";
 
 export default function RootLayout({
   children,
@@ -29,32 +30,54 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        <header className="site-header">
-          <div className="container" style={{ gap: "1rem" }}>
-            <h1 className="site-title">
-              <Link href="/">Dave’s Site</Link>
-            </h1>
-            <nav className="site-nav" aria-label="Primary">
-              <ul>
-                <li>
-                  <Link href="/about">About</Link>
-                </li>
-                <li>
-                  <Link href="/blog">Blog</Link>
-                </li>
-                <li>
-                  <Link href="/works">Works</Link>
-                </li>
-              </ul>
-            </nav>
-            <div className="auth-controls">
-              <AuthControls />
-            </div>
-          </div>
-        </header>
+        <Header />
         <main className="site-main container">{children}</main>
         <footer className="site-footer container">
-          <small>© Dave</small>
+          <div style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            flexWrap: "wrap",
+            gap: "1rem"
+          }}>
+            <small>
+              © {new Date().getFullYear()} <a 
+                href="mailto:creative.disonance@yahoo.com" 
+                className="footer-email-link"
+                style={{ 
+                  color: "inherit", 
+                  textDecoration: "none",
+                  borderBottom: "1px dotted #6b7280",
+                  transition: "border-bottom 0.2s ease"
+                }}
+              >
+                Dave Todd
+              </a>. All rights reserved.
+            </small>
+            <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
+              <AuthControls />
+              <Link 
+                href="/privacy" 
+                style={{ 
+                  fontSize: "0.875rem", 
+                  color: "#6b7280",
+                  textDecoration: "none" 
+                }}
+              >
+                Privacy
+              </Link>
+              <Link 
+                href="/terms" 
+                style={{ 
+                  fontSize: "0.875rem", 
+                  color: "#6b7280",
+                  textDecoration: "none" 
+                }}
+              >
+                Terms
+              </Link>
+            </div>
+          </div>
         </footer>
       </body>
     </html>

@@ -31,7 +31,7 @@ body {
 .container {
   max-width: 960px;
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 0 2.5rem;
 }
 
 /* Typography and links */
@@ -136,7 +136,7 @@ figure figcaption,
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1rem 1rem;
+  padding: 1rem 2.5rem;
 }
 .site-title a {
   color: var(--color-text);
@@ -207,11 +207,31 @@ figure figcaption,
 
 /* Main & Footer */
 .site-main {
-  padding: 2rem 1rem;
+  padding: 2rem 2.5rem;
+  min-height: calc(100vh - 400px); /* Ensure main content has minimum height */
 }
 .site-footer {
   border-top: 1px solid var(--color-border);
   color: var(--color-muted);
-  padding: 1.5rem 1rem;
+  padding: 1.5rem 2.5rem;
   font-size: 0.875rem;
+  background: linear-gradient(180deg, #f9fafb 0%, #f3f4f6 100%);
+}
+
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Focus styles for accessibility */
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid #8aa5d6;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Footer email link hover effect */
+.footer-email-link:hover {
+  border-bottom: 1px solid #6b7280 !important;
 }

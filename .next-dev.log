@@ -1746,3 +1746,359 @@ Error: Route "/admin/posts/[slug]/edit" used `params.slug`. `params` should be a
  ✓ Compiled in 13ms
  ✓ Compiled in 21ms
  ✓ Compiled in 8ms
+ ✓ Compiled / in 36ms
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.u442ckdcz6'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.u442ckdcz6'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.dz94plf5abg'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.dz94plf5abg'
+}
+[Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.u442ckdcz6'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.u442ckdcz6'
+}
+ ⨯ [Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.b34e40e98ov'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.b34e40e98ov'
+}
+[Error: ENOENT: no such file or directory, open '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.iw0l7yj9fv'] {
+  errno: -2,
+  code: 'ENOENT',
+  syscall: 'open',
+  path: '/Users/theresa/PycharmProjects/davessite/.next/static/development/_buildManifest.js.tmp.iw0l7yj9fv'
+}
+ ✓ Compiled in 27ms
+ ✓ Compiled in 13ms
+ ✓ Compiled in 46ms
+ GET / 200 in 138ms
+ ✓ Compiled /admin in 20ms
+ GET /admin 200 in 958ms
+ ✓ Compiled /api/me in 51ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 247ms
+ GET /api/me 200 in 308ms
+ ✓ Compiled in 19ms
+ ✓ Compiled in 15ms
+ ✓ Compiled in 20ms
+ ✓ Compiled in 15ms
+ ✓ Compiled in 71ms
+ ✓ Compiled in 25ms
+ ✓ Compiled in 22ms
+ GET /admin 200 in 949ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 233ms
+ GET /api/me 200 in 225ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 240ms
+ ✓ Compiled in 32ms
+ ✓ Compiled /admin in 14ms
+ ✓ Compiled in 317ms
+ GET /admin 200 in 189ms
+ GET /admin 200 in 1163ms
+ GET /admin 200 in 1561ms
+ GET /admin 200 in 1221ms
+ GET /admin 200 in 1348ms
+ GET /admin 200 in 1190ms
+ GET /admin 200 in 213ms
+ GET /api/me 200 in 320ms
+ GET /api/me 200 in 320ms
+ GET /admin 200 in 1844ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 229ms
+ GET /api/me 200 in 241ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 228ms
+ ✓ Compiled in 7ms
+ ✓ Compiled / in 18ms
+ GET / 200 in 134ms
+ ✓ Compiled /blog in 35ms
+ GET /blog 200 in 838ms
+ GET /blog 200 in 371ms
+ ✓ Compiled /_not-found/page in 128ms
+ GET /media/videos 404 in 166ms
+ GET /media/videos 404 in 121ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 229ms
+ GET /api/me 200 in 234ms
+ GET /blog 200 in 672ms
+ GET /api/me 200 in 229ms
+ ✓ Compiled in 26ms
+ ✓ Compiled in 10ms
+ GET / 200 in 128ms
+ ✓ Compiled in 28ms
+ GET / 200 in 162ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 236ms
+ GET /api/me 200 in 247ms
+ GET /works/latest 404 in 59ms
+ GET /works/latest 404 in 41ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 226ms
+ GET /api/me 200 in 242ms
+ GET /api/me 200 in 243ms
+ GET / 200 in 75ms
+ GET /api/me 200 in 237ms
+ ✓ Compiled in 8ms
+ GET / 200 in 74ms
+ GET / 200 in 24ms
+ ✓ Compiled /media/gallery in 101ms
+ GET /media/gallery 200 in 200ms
+ GET /media/gallery 200 in 61ms
+ ✓ Compiled in 17ms
+ GET /media/gallery 404 in 157ms
+ GET /media/gallery 404 in 161ms
+ GET /media/gallery 404 in 57ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 261ms
+ GET /api/me 200 in 249ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 252ms
+ GET /media/gallery 200 in 66ms
+ GET /media/gallery 200 in 24ms
+ GET /api/admin/check 404 in 104ms
+ GET /api/admin/check 404 in 33ms
+ GET /media/gallery 200 in 68ms
+ GET /media/gallery 200 in 25ms
+ GET /media/gallery 200 in 138ms
+ ✓ Compiled /api/admin/check in 88ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 264ms
+ GET /api/me 200 in 261ms
+ GET /api/admin/check 200 in 341ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 221ms
+ ✓ Compiled in 6ms
+ GET /media 404 in 96ms
+ GET /media 404 in 98ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 228ms
+ GET /api/me 200 in 230ms
+ GET /media 404 in 60ms
+ GET /media 404 in 36ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 229ms
+ GET /api/me 200 in 230ms
+ GET / 200 in 78ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 242ms
+ GET /api/me 200 in 231ms
+ ✓ Compiled in 13ms
+ GET / 200 in 185ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 276ms
+ GET /api/me 200 in 238ms
+ GET / 200 in 82ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 226ms
+ GET /api/me 200 in 225ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 253ms
+ ✓ Compiled / in 25ms
+ ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <a href=... style={{...}} onMouseEnter={function onMouseEnter} onMouseLeave=... children=...>
+                                         ^^^^^^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+    at stringify (<anonymous>)
+    at stringify (<anonymous>) {
+  digest: '684143309'
+}
+ ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <a href=... style={{...}} onMouseEnter=... onMouseLeave={function onMouseLeave} children=...>
+                                                          ^^^^^^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+    at stringify (<anonymous>)
+    at stringify (<anonymous>) {
+  digest: '3396839469'
+}
+ GET / 200 in 274ms
+ ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <a href=... style={{...}} onMouseEnter={function onMouseEnter} onMouseLeave=... children=...>
+                                         ^^^^^^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+    at stringify (<anonymous>)
+    at stringify (<anonymous>) {
+  digest: '684143309'
+}
+ ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <a href=... style={{...}} onMouseEnter=... onMouseLeave={function onMouseLeave} children=...>
+                                                          ^^^^^^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+    at stringify (<anonymous>)
+    at stringify (<anonymous>) {
+  digest: '3396839469'
+}
+ GET / 200 in 239ms
+ ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <a href=... style={{...}} onMouseEnter={function onMouseEnter} onMouseLeave=... children=...>
+                                         ^^^^^^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+    at stringify (<anonymous>)
+    at stringify (<anonymous>) {
+  digest: '684143309'
+}
+ ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <a href=... style={{...}} onMouseEnter=... onMouseLeave={function onMouseLeave} children=...>
+                                                          ^^^^^^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+    at stringify (<anonymous>)
+    at stringify (<anonymous>) {
+  digest: '3396839469'
+}
+ GET / 200 in 189ms
+ ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <a href=... style={{...}} onMouseEnter={function onMouseEnter} onMouseLeave=... children=...>
+                                         ^^^^^^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+    at stringify (<anonymous>)
+    at stringify (<anonymous>) {
+  digest: '684143309'
+}
+ ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <a href=... style={{...}} onMouseEnter=... onMouseLeave={function onMouseLeave} children=...>
+                                                          ^^^^^^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+    at stringify (<anonymous>)
+    at stringify (<anonymous>) {
+  digest: '3396839469'
+}
+ GET / 200 in 182ms
+ ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <a href=... style={{...}} onMouseEnter={function onMouseEnter} onMouseLeave=... children=...>
+                                         ^^^^^^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+    at stringify (<anonymous>)
+    at stringify (<anonymous>) {
+  digest: '684143309'
+}
+ ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <a href=... style={{...}} onMouseEnter=... onMouseLeave={function onMouseLeave} children=...>
+                                                          ^^^^^^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+    at stringify (<anonymous>)
+    at stringify (<anonymous>) {
+  digest: '3396839469'
+}
+ GET / 200 in 188ms
+ ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <a href=... style={{...}} onMouseEnter={function onMouseEnter} onMouseLeave=... children=...>
+                                         ^^^^^^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+    at stringify (<anonymous>)
+    at stringify (<anonymous>) {
+  digest: '684143309'
+}
+ ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <a href=... style={{...}} onMouseEnter=... onMouseLeave={function onMouseLeave} children=...>
+                                                          ^^^^^^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+    at stringify (<anonymous>)
+    at stringify (<anonymous>) {
+  digest: '3396839469'
+}
+ GET / 200 in 180ms
+ ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <a href=... style={{...}} onMouseEnter={function onMouseEnter} onMouseLeave=... children=...>
+                                         ^^^^^^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+    at stringify (<anonymous>)
+    at stringify (<anonymous>) {
+  digest: '684143309'
+}
+ ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <a href=... style={{...}} onMouseEnter=... onMouseLeave={function onMouseLeave} children=...>
+                                                          ^^^^^^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+    at stringify (<anonymous>)
+    at stringify (<anonymous>) {
+  digest: '3396839469'
+}
+ GET / 200 in 201ms
+ ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <a href=... style={{...}} onMouseEnter={function onMouseEnter} onMouseLeave=... children=...>
+                                         ^^^^^^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+    at stringify (<anonymous>)
+    at stringify (<anonymous>) {
+  digest: '684143309'
+}
+ ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <a href=... style={{...}} onMouseEnter=... onMouseLeave={function onMouseLeave} children=...>
+                                                          ^^^^^^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+    at stringify (<anonymous>)
+    at stringify (<anonymous>) {
+  digest: '3396839469'
+}
+ GET / 200 in 220ms
+ ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <a href=... style={{...}} onMouseEnter={function onMouseEnter} onMouseLeave=... children=...>
+                                         ^^^^^^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+    at stringify (<anonymous>)
+    at stringify (<anonymous>) {
+  digest: '684143309'
+}
+ ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <a href=... style={{...}} onMouseEnter=... onMouseLeave={function onMouseLeave} children=...>
+                                                          ^^^^^^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+    at stringify (<anonymous>)
+    at stringify (<anonymous>) {
+  digest: '3396839469'
+}
+ GET / 500 in 330ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 229ms
+ GET /favicon.ico 200 in 269ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <a href=... style={{...}} onMouseEnter={function onMouseEnter} onMouseLeave=... children=...>
+                                         ^^^^^^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+    at stringify (<anonymous>)
+    at stringify (<anonymous>) {
+  digest: '684143309'
+}
+ ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <a href=... style={{...}} onMouseEnter=... onMouseLeave={function onMouseLeave} children=...>
+                                                          ^^^^^^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+    at stringify (<anonymous>)
+    at stringify (<anonymous>) {
+  digest: '3396839469'
+}
+ ✓ Compiled in 7ms
+ GET / 500 in 302ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 258ms
+ GET /favicon.ico 200 in 220ms
+ ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <a href=... style={{...}} onMouseEnter={function onMouseEnter} onMouseLeave=... children=...>
+                                         ^^^^^^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+    at stringify (<anonymous>)
+    at stringify (<anonymous>) {
+  digest: '684143309'
+}
+ ⨯ Error: Event handlers cannot be passed to Client Component props.
+  <a href=... style={{...}} onMouseEnter=... onMouseLeave={function onMouseLeave} children=...>
+                                                          ^^^^^^^^^^^^^^^^^^^^^^^
+If you need interactivity, consider converting part of this to a Client Component.
+    at stringify (<anonymous>)
+    at stringify (<anonymous>) {
+  digest: '3396839469'
+}
+ GET / 500 in 247ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 222ms
+ GET /favicon.ico 200 in 233ms
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ ⚠ Fast Refresh had to perform a full reload due to a runtime error.
+ GET / 200 in 130ms
+ ✓ Compiled / in 8ms
+ GET / 200 in 32ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 237ms
+ GET /api/me 200 in 261ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 224ms
+ ✓ Compiled / in 10ms
+ GET / 200 in 195ms
+ GET / 200 in 141ms
+ GET / 200 in 94ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 222ms
+ GET /api/me 200 in 224ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 229ms
+ ✓ Compiled in 6ms
+ GET / 200 in 74ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 222ms
+ GET /api/me 200 in 227ms
+ GET /favicon.ico?favicon.0b3bf435.ico 200 in 230ms
+ ✓ Compiled in 88ms
