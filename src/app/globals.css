@@ -43,6 +43,35 @@ body {
   text-decoration: underline;
 }
 
+/* Typography spacing */
+h1, h2, h3, h4, h5, h6 {
+  line-height: 1.25;
+}
+
+h1 { margin: 2rem 0 1rem; }
+h2 { margin: 1.75rem 0 0.875rem; }
+h3 { margin: 1.5rem 0 0.75rem; }
+h4 { margin: 1.25rem 0 0.625rem; }
+h5 { margin: 1rem 0 0.5rem; }
+h6 { margin: 0.75rem 0 0.375rem; }
+
+p {
+  line-height: 1.7;
+  margin: 1rem 0;
+}
+
+/* Remove excess outer spacing at section/article boundaries */
+article > :first-child,
+section > :first-child,
+main > :first-child {
+  margin-top: 0;
+}
+article > :last-child,
+section > :last-child,
+main > :last-child {
+  margin-bottom: 0;
+}
+
 /* Header & Nav */
 .site-header {
   background-color: #ffffff;
