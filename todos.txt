@@ -1,0 +1,10 @@
+To do:
+
+Done as of 9/8/25:
+- Preview tab for draft posts
+- Ability to preload a draft into the editor for editing
+
+
+Known Bugs and Needed Enhancements:
+- image captions are wonky
+- can only reasonably manage one image per post
