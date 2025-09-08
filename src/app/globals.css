@@ -72,6 +72,36 @@ main > :last-child {
   margin-bottom: 0;
 }
 
+/* List spacing and indentation within main content */
+.site-main ul, .site-main ol,
+.post-content ul, .post-content ol {
+  margin: 0.875rem 0; /* slightly tighter than paragraphs */
+  padding-left: 1.25rem; /* shallower indent so content aligns better */
+}
+
+/* Tighter spacing between list items */
+.site-main li, .post-content li {
+  margin: 0.25rem 0;
+}
+
+/* Ensure bullets stay outside for better alignment */
+.post-content ul, .post-content ol {
+  list-style-position: outside;
+}
+
+/* Centered image captions */
+.post-content figure { margin: 1rem 0; }
+.post-content figure > img { margin-bottom: 0.5rem; }
+.post-content figcaption,
+figure figcaption,
+.image-caption {
+  text-align: center;
+  color: var(--color-muted);
+  font-size: 0.875rem;
+  font-style: italic;
+  margin: 0.5rem 0 1rem;
+}
+
 /* Header & Nav */
 .site-header {
   background-color: #ffffff;
@@ -90,6 +120,7 @@ main > :last-child {
   list-style: none;
   display: flex;
   gap: 1rem;
+  padding-left: 0; /* prevent global list padding from affecting nav */
 }
 .site-nav a {
   color: var(--color-text);
