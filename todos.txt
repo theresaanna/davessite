@@ -7,6 +7,9 @@ Done as of 9/8/25:
 - Preview tab for draft posts
 - Ability to preload a draft into the editor for editing
 - Beginning of new admin design
+- Working gallery for admins to update via website
+- First version of a visual design sans images
+- New skeleton navigation
 
 Known Bugs and Needed Enhancements:
 - image captions are wonky
