@@ -156,7 +156,7 @@ export async function saveMarkdownPost({
   const file = matter.stringify(markdown, { title, date: now, slug: finalSlug, status });
   if (useBlob) {
     const key = `posts/${finalSlug}.md`;
-    await blobPut(key, file, { access: "public", contentType: "text/markdown", token: blobToken });
+await blobPut(key, file, { access: "public", contentType: "text/markdown", token: blobToken, allowOverwrite: true });
     return { slug: finalSlug, path: key };
   } else {
     await ensurePostsDir();
@@ -199,7 +199,7 @@ export async function updateMarkdownPost({
   const file = matter.stringify(content, data as Record<string, unknown>);
   if (useBlob) {
     const newKey = `posts/${newSlug}.md`;
-    await blobPut(newKey, file, { access: "public", contentType: "text/markdown", token: blobToken });
+await blobPut(newKey, file, { access: "public", contentType: "text/markdown", token: blobToken, allowOverwrite: true });
     if (prevSlug !== newSlug) {
       try { await blobDel(`posts/${prevSlug}.md`, { token: blobToken }); } catch {}
     }
@@ -244,7 +244,7 @@ export async function updatePostStatus(slug: string, status: "draft" | "publishe
     }
     const file = matter.stringify(parsed.content as string, data as Record<string, unknown>);
     if (useBlob) {
-      await blobPut(`posts/${slug}.md`, file, { access: "public", contentType: "text/markdown", token: blobToken });
+await blobPut(`posts/${slug}.md`, file, { access: "public", contentType: "text/markdown", token: blobToken, allowOverwrite: true });
     } else {
       const filePath = path.join(postsDir, `${slug}.md`);
       await fs.writeFile(filePath, file, "utf8");
