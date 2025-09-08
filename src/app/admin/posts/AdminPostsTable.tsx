@@ -50,12 +50,26 @@ export default function AdminPostsTable({ initialPosts }: { initialPosts: PostRo
             <tbody>
               {posts.map((p) => (
                 <tr key={p.slug}>
-                  <td style={td}><Link href={`/blog/${p.slug}`}>{p.title}</Link></td>
+                  <td style={td}>
+                    <Link href={`/blog/${p.slug}`} title={p.status === "draft" ? "View draft (admin only)" : "View published post"}>
+                      {p.title}
+                    </Link>
+                  </td>
                   <td style={td}><code>{p.slug}</code></td>
                   <td style={td}><span style={{ color: "var(--color-muted)" }}>{formatDate(p.date)}</span></td>
-                  <td style={td}><span style={{ padding: "0.125rem 0.375rem", border: "1px solid var(--color-border)", borderRadius: 9999, fontSize: 12 }}>
-                    {p.status === "draft" ? "Draft" : "Published"}
-                  </span></td>
+                  <td style={td}>
+                    <span style={{ 
+                      padding: "0.125rem 0.375rem", 
+                      border: p.status === "draft" ? "1px solid #f59e0b" : "1px solid #10b981",
+                      background: p.status === "draft" ? "#fef3c7" : "#d1fae5",
+                      color: p.status === "draft" ? "#92400e" : "#064e3b",
+                      borderRadius: 9999, 
+                      fontSize: 12,
+                      fontWeight: 500
+                    }}>
+                      {p.status === "draft" ? "📝 Draft" : "✅ Published"}
+                    </span>
+                  </td>
                   <td style={td}>
                     <div style={{ display: "flex", gap: 8 }}>
                       <Link href={`/admin/posts/${p.slug}/edit`} style={{ border: "1px solid var(--color-border)", padding: "0.25rem 0.5rem", borderRadius: 4 }}>Edit</Link>

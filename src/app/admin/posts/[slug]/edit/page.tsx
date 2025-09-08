@@ -4,9 +4,10 @@ import { getPostBySlug } from "@/lib/posts";
 import EditorClient from "../../../editor/EditorClient";
 
 export default async function EditPostPage({ params }: { params: { slug: string } }) {
+  const { slug } = await params;
   const session = await getSession();
   if (!session.user) redirect("/login");
-  const post = await getPostBySlug(params.slug);
+  const post = await getPostBySlug(slug);
   if (!post) redirect("/admin");
   return (
     <section>

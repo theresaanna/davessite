@@ -8,6 +8,7 @@ import Link from "@tiptap/extension-link";
 import Underline from "@tiptap/extension-underline";
 import Image from "@tiptap/extension-image";
 import { useEffect } from "react";
+import PreviewPane from "./PreviewPane";
 
 function slugify(input: string) {
   return input
@@ -18,18 +19,37 @@ function slugify(input: string) {
     .replace(/-+/g, "-");
 }
 
-function ToolButton({ active, onClick, children, title }: { active?: boolean; onClick: () => void; children: React.ReactNode; title?: string }) {
+function ToolButton({ active, onClick, children, title, disabled = false }: { active?: boolean; onClick: () => void; children: React.ReactNode; title?: string; disabled?: boolean }) {
   return (
     <button
       type="button"
       onClick={onClick}
       title={title}
+      disabled={disabled}
       style={{
-        border: active ? "1px solid var(--color-accent)" : "1px solid var(--color-border)",
-        background: active ? "#eef2ff" : "#fff",
-        color: "var(--color-text)",
-        borderRadius: 4,
-        padding: "0.25rem 0.5rem",
+        border: active ? "1px solid #8aa5d6" : "1px solid transparent",
+        background: active ? "linear-gradient(135deg, #8aa5d6 0%, #6b8cc9 100%)" : "#f3f4f6",
+        color: active ? "#fff" : "#374151",
+        borderRadius: 8,
+        padding: "0.5rem 0.75rem",
+        fontSize: "0.875rem",
+        fontWeight: active ? 600 : 500,
+        cursor: disabled ? "not-allowed" : "pointer",
+        opacity: disabled ? 0.5 : 1,
+        transition: "all 0.2s ease",
+        boxShadow: active ? "0 2px 4px rgba(138, 165, 214, 0.3)" : "none",
+      }}
+      onMouseEnter={(e) => {
+        if (!active && !disabled) {
+          e.currentTarget.style.background = "#e5e7eb";
+          e.currentTarget.style.transform = "translateY(-1px)";
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (!active && !disabled) {
+          e.currentTarget.style.background = "#f3f4f6";
+          e.currentTarget.style.transform = "translateY(0)";
+        }
       }}
     >
       {children}
@@ -38,7 +58,12 @@ function ToolButton({ active, onClick, children, title }: { active?: boolean; on
 }
 
 function Separator() {
-  return <span style={{ width: 1, background: "var(--color-border)", alignSelf: "stretch" }} />;
+  return <span style={{ 
+    width: 1, 
+    background: "linear-gradient(180deg, transparent, #e5e7eb 20%, #e5e7eb 80%, transparent)", 
+    alignSelf: "stretch",
+    margin: "0 0.25rem"
+  }} />;
 }
 
 export default function EditorClient({
@@ -60,6 +85,7 @@ export default function EditorClient({
   const [isAutoSaving, setIsAutoSaving] = useState(false);
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [activeTab, setActiveTab] = useState<"write" | "preview">("write");
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const editor = useEditor({
@@ -233,70 +259,280 @@ export default function EditorClient({
   }, [title, computedSlug, editor, router, mode, initialSlug, draftKey]);
 
   return (
-    <section>
-      <h2>{mode === "edit" ? "Edit Post" : "New Post"}</h2>
-      <div style={{ margin: "1rem 0" }}>
-        <label>
-          Title
+    <section style={{ maxWidth: "1200px", margin: "0 auto" }}>
+      <div style={{
+        background: "linear-gradient(135deg, #8aa5d6 0%, #6b8cc9 100%)",
+        padding: "2rem",
+        borderRadius: "16px 16px 0 0",
+        marginBottom: "2rem"
+      }}>
+        <h2 style={{ 
+          color: "#fff", 
+          fontSize: "1.875rem", 
+          fontWeight: 700,
+          margin: 0,
+          textShadow: "0 2px 4px rgba(0,0,0,0.1)"
+        }}>
+          {mode === "edit" ? "✏️ Edit Post" : "✨ Create New Post"}
+        </h2>
+      </div>
+      
+      <div style={{ 
+        background: "#fff",
+        borderRadius: 16,
+        padding: "1.5rem",
+        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.07)",
+        marginBottom: "1.5rem"
+      }}>
+        <label style={{ display: "block", marginBottom: "1rem" }}>
+          <div style={{
+            display: "flex",
+            alignItems: "baseline",
+            justifyContent: "space-between",
+            marginBottom: "0.5rem"
+          }}>
+            <span style={{ 
+              fontWeight: 600,
+              fontSize: "0.875rem",
+              color: "#374151"
+            }}>
+              📝 Post Title
+            </span>
+            {mode === "create" && (
+              <span style={{ 
+                fontSize: "0.75rem", 
+                color: "#6b7280",
+                fontStyle: "italic"
+              }}>
+                💡 Autosave activates after adding a title
+              </span>
+            )}
+          </div>
           <input
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="Post title"
+            placeholder="Enter an engaging title for your post..."
             style={{
               display: "block",
               width: "100%",
-              padding: "0.5rem",
-              border: "1px solid var(--color-border)",
-              borderRadius: 4,
-              marginTop: 4,
+              padding: "0.75rem 1rem",
+              border: "2px solid #e5e7eb",
+              borderRadius: 12,
+              fontSize: "1rem",
+              fontWeight: 500,
+              transition: "all 0.2s ease",
+              outline: "none",
+              background: "#f9fafb"
+            }}
+            onFocus={(e) => {
+              e.currentTarget.style.borderColor = "#8aa5d6";
+              e.currentTarget.style.background = "#fff";
+              e.currentTarget.style.boxShadow = "0 0 0 3px rgba(138, 165, 214, 0.2)";
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.borderColor = "#e5e7eb";
+              e.currentTarget.style.background = "#f9fafb";
+              e.currentTarget.style.boxShadow = "none";
             }}
           />
         </label>
-        <div style={{ color: "var(--color-muted)", marginTop: 4 }}>
-          Slug: {computedSlug || "(auto)"}
+        <div style={{ 
+          display: "flex", 
+          alignItems: "center",
+          gap: "0.5rem",
+          padding: "0.75rem 1rem",
+          background: "linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%)",
+          borderRadius: 8,
+          fontSize: "0.875rem"
+        }}>
+          <span style={{ fontWeight: 600, color: "#6b7280" }}>🔗 URL Slug:</span>
+          <code style={{ 
+            background: "#fff",
+            padding: "0.25rem 0.5rem",
+            borderRadius: 4,
+            color: "#8aa5d6",
+            fontWeight: 500
+          }}>
+            {computedSlug || "auto-generated"}
+          </code>
         </div>
       </div>
+      
+      {/* Tab Navigation */}
+      <div style={{ 
+        background: "#fff",
+        borderRadius: 16,
+        padding: "0.5rem",
+        marginBottom: "1.5rem",
+        boxShadow: "0 2px 4px rgba(0, 0, 0, 0.05)",
+        display: "flex",
+        gap: "0.5rem"
+      }}>
+        <button
+          type="button"
+          onClick={() => setActiveTab("write")}
+          style={{
+            flex: 1,
+            padding: "0.75rem 1.5rem",
+            background: activeTab === "write" 
+              ? "linear-gradient(135deg, #8aa5d6 0%, #6b8cc9 100%)" 
+              : "transparent",
+            border: "none",
+            borderRadius: 12,
+            color: activeTab === "write" ? "#fff" : "#6b7280",
+            fontWeight: 600,
+            fontSize: "0.875rem",
+            cursor: "pointer",
+            transition: "all 0.3s ease",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "0.5rem"
+          }}
+        >
+          <span>{activeTab === "write" ? "✍️" : "📝"}</span>
+          Write
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab("preview")}
+          style={{
+            flex: 1,
+            padding: "0.75rem 1.5rem",
+            background: activeTab === "preview" 
+              ? "linear-gradient(135deg, #8aa5d6 0%, #6b8cc9 100%)" 
+              : "transparent",
+            border: "none",
+            borderRadius: 12,
+            color: activeTab === "preview" ? "#fff" : "#6b7280",
+            fontWeight: 600,
+            fontSize: "0.875rem",
+            cursor: "pointer",
+            transition: "all 0.3s ease",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "0.5rem"
+          }}
+        >
+          <span>{activeTab === "preview" ? "👀" : "🔍"}</span>
+          Preview
+        </button>
+      </div>
 
-      {mode === "create" && (
-        <div style={{ color: "var(--color-muted)", fontSize: 12, margin: "-0.25rem 0 0.25rem" }}>
-          Note: autosave runs only after you add a title.
+      {activeTab === "write" && (
+        <div style={{ 
+          padding: "0.75rem 1rem",
+          background: "linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)",
+          borderRadius: 8,
+          fontSize: "0.875rem",
+          marginBottom: "1rem",
+          display: "flex",
+          alignItems: "center",
+          gap: "0.5rem"
+        }}>
+          <span>💡</span>
+          <span>Formatting tip: You can use </span>
+          <a 
+            href="https://www.markdownguide.org/basic-syntax/" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            style={{
+              color: "#8aa5d6",
+              fontWeight: 600,
+              textDecoration: "underline"
+            }}
+          >
+            Markdown syntax
+          </a>
+          <span>for rich text formatting</span>
         </div>
       )}
-      <div style={{ color: "var(--color-muted)", fontSize: 12, margin: "0 0 0.5rem" }}>
-        Formatting tips: <a href="https://www.markdownguide.org/basic-syntax/" target="_blank" rel="noopener noreferrer">Markdown reference</a>
-      </div>
 
-      {/* Toolbar */}
-      {editor && (
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 8 }}>
-          <ToolButton title="Bold (Cmd/Ctrl+B)" active={editor.isActive('bold')} onClick={() => editor.chain().focus().toggleBold().run()}>B</ToolButton>
-          <ToolButton title="Italic (Cmd/Ctrl+I)" active={editor.isActive('italic')} onClick={() => editor.chain().focus().toggleItalic().run()}><i>I</i></ToolButton>
-          <ToolButton title="Underline" active={editor.isActive('underline')} onClick={() => editor.chain().focus().toggleUnderline().run()}><u>U</u></ToolButton>
-          <Separator />
-          <ToolButton title="Heading 2" active={editor.isActive('heading', { level: 2 })} onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}>H2</ToolButton>
-          <ToolButton title="Heading 3" active={editor.isActive('heading', { level: 3 })} onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}>H3</ToolButton>
-          <Separator />
-          <ToolButton title="Bulleted list" active={editor.isActive('bulletList')} onClick={() => editor.chain().focus().toggleBulletList().run()}>• List</ToolButton>
-          <ToolButton title="Numbered list" active={editor.isActive('orderedList')} onClick={() => editor.chain().focus().toggleOrderedList().run()}>1. List</ToolButton>
-          <Separator />
-          <ToolButton title="Blockquote" active={editor.isActive('blockquote')} onClick={() => editor.chain().focus().toggleBlockquote().run()}>&ldquo;Quote&rdquo;</ToolButton>
-          <Separator />
-          <ToolButton title="Add/Remove link" active={editor.isActive('link')} onClick={() => {
-            const href = window.prompt('Enter URL', editor.getAttributes('link').href || 'https://');
-            if (href === null) return; // cancel
-            if (href === '') { editor.chain().focus().unsetLink().run(); return; }
-            editor.chain().focus().extendMarkRange('link').setLink({ href, target: '_blank' }).run();
-          }}>Link</ToolButton>
-          <ToolButton title="Insert image by URL" onClick={() => {
-            const src = window.prompt('Image URL (https://...)');
-            if (!src) return;
-            editor.chain().focus().setImage({ src }).run();
-          }}>Image URL</ToolButton>
-          <ToolButton title="Upload image" onClick={() => fileInputRef.current?.click()}>{uploadingImage ? 'Uploading…' : 'Upload Image'}</ToolButton>
-          <ToolButton title="Image settings (alt, caption, size, align)" onClick={() => setShowImagePanel((v) => !v)}>Image settings</ToolButton>
-          <Separator />
-          <ToolButton title="Undo (Cmd/Ctrl+Z)" onClick={() => editor.chain().focus().undo().run()}>Undo</ToolButton>
-          <ToolButton title="Redo (Cmd/Ctrl+Shift+Z)" onClick={() => editor.chain().focus().redo().run()}>Redo</ToolButton>
+      {/* Toolbar - only show in Write mode */}
+      {editor && activeTab === "write" && (
+        <div style={{ 
+          background: "#fff",
+          borderRadius: 12,
+          padding: "1rem",
+          marginBottom: "1rem",
+          boxShadow: "0 2px 4px rgba(0, 0, 0, 0.05)",
+          border: "1px solid #e5e7eb"
+        }}>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 8, alignItems: "center" }}>
+            {/* Text Formatting */}
+            <ToolButton title="Bold (Cmd/Ctrl+B)" active={editor.isActive('bold')} onClick={() => editor.chain().focus().toggleBold().run()}>
+              <strong>🅱</strong>
+            </ToolButton>
+            <ToolButton title="Italic (Cmd/Ctrl+I)" active={editor.isActive('italic')} onClick={() => editor.chain().focus().toggleItalic().run()}>
+              <em style={{ fontStyle: "italic" }}>𝐼</em>
+            </ToolButton>
+            <ToolButton title="Underline" active={editor.isActive('underline')} onClick={() => editor.chain().focus().toggleUnderline().run()}>
+              <span style={{ textDecoration: "underline" }}>𝑈</span>
+            </ToolButton>
+            
+            <Separator />
+            
+            {/* Headers */}
+            <ToolButton title="Heading 2" active={editor.isActive('heading', { level: 2 })} onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}>
+              <span style={{ fontWeight: 700 }}>𝐇₂</span>
+            </ToolButton>
+            <ToolButton title="Heading 3" active={editor.isActive('heading', { level: 3 })} onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}>
+              <span style={{ fontWeight: 600 }}>𝐇₃</span>
+            </ToolButton>
+            
+            <Separator />
+            
+            {/* Lists */}
+            <ToolButton title="Bulleted list" active={editor.isActive('bulletList')} onClick={() => editor.chain().focus().toggleBulletList().run()}>
+              🔸 List
+            </ToolButton>
+            <ToolButton title="Numbered list" active={editor.isActive('orderedList')} onClick={() => editor.chain().focus().toggleOrderedList().run()}>
+              🔢 List
+            </ToolButton>
+            
+            <Separator />
+            
+            {/* Quote */}
+            <ToolButton title="Blockquote" active={editor.isActive('blockquote')} onClick={() => editor.chain().focus().toggleBlockquote().run()}>
+              💬 Quote
+            </ToolButton>
+            
+            <Separator />
+            
+            {/* Links & Media */}
+            <ToolButton title="Add/Remove link" active={editor.isActive('link')} onClick={() => {
+              const href = window.prompt('Enter URL', editor.getAttributes('link').href || 'https://');
+              if (href === null) return;
+              if (href === '') { editor.chain().focus().unsetLink().run(); return; }
+              editor.chain().focus().extendMarkRange('link').setLink({ href, target: '_blank' }).run();
+            }}>
+              🔗 Link
+            </ToolButton>
+            <ToolButton title="Insert image by URL" onClick={() => {
+              const src = window.prompt('Image URL (https://...)');
+              if (!src) return;
+              editor.chain().focus().setImage({ src }).run();
+            }}>
+              🌐 Image
+            </ToolButton>
+            <ToolButton title="Upload image" disabled={uploadingImage} onClick={() => fileInputRef.current?.click()}>
+              {uploadingImage ? '⏳ Uploading…' : '📁 Upload'}
+            </ToolButton>
+            <ToolButton title="Image settings" onClick={() => setShowImagePanel((v) => !v)}>
+              ⚙️ Settings
+            </ToolButton>
+            
+            <Separator />
+            
+            {/* History */}
+            <ToolButton title="Undo (Cmd/Ctrl+Z)" onClick={() => editor.chain().focus().undo().run()}>
+              ↩️ Undo
+            </ToolButton>
+            <ToolButton title="Redo (Cmd/Ctrl+Shift+Z)" onClick={() => editor.chain().focus().redo().run()}>
+              ↪️ Redo
+            </ToolButton>
+          </div>
         </div>
       )}
 
@@ -319,116 +555,426 @@ export default function EditorClient({
         }}
       />
 
-      {showImagePanel && (
-        <div style={{ border: "1px solid var(--color-border)", borderRadius: 6, padding: 8, marginBottom: 8, background: "#fff" }}>
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
-            <label>Alt
-              <input value={imgAlt} onChange={(e) => setImgAlt(e.target.value)} style={{ marginLeft: 4, padding: 4, border: "1px solid var(--color-border)", borderRadius: 4 }} />
+      {showImagePanel && activeTab === "write" && (
+        <div style={{ 
+          background: "linear-gradient(135deg, #f4f7fc 0%, #e8eef7 100%)",
+          border: "2px solid #8aa5d6",
+          borderRadius: 12, 
+          padding: "1rem", 
+          marginBottom: "1rem",
+          boxShadow: "0 4px 6px rgba(138, 165, 214, 0.15)"
+        }}>
+          <div style={{ 
+            display: "flex", 
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginBottom: "1rem"
+          }}>
+            <h4 style={{ 
+              margin: 0, 
+              color: "#5a7aa8",
+              fontWeight: 600,
+              fontSize: "1rem"
+            }}>
+              🌆 Image Settings
+            </h4>
+            <button
+              type="button"
+              onClick={() => setShowImagePanel(false)}
+              style={{
+                background: "transparent",
+                border: "none",
+                fontSize: "1.25rem",
+                cursor: "pointer",
+                color: "#6b7280",
+                padding: "0.25rem"
+              }}
+            >
+              ×
+            </button>
+          </div>
+          <div style={{ 
+            display: "grid", 
+            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+            gap: "1rem"
+          }}>
+            <label style={{ display: "block" }}>
+              <span style={{ 
+                display: "block", 
+                marginBottom: "0.25rem", 
+                fontSize: "0.875rem",
+                fontWeight: 500,
+                color: "#374151"
+              }}>Alt Text</span>
+              <input 
+                value={imgAlt} 
+                onChange={(e) => setImgAlt(e.target.value)} 
+                placeholder="Describe the image"
+                style={{ 
+                  width: "100%",
+                  padding: "0.5rem", 
+                  border: "1px solid #d1d5db", 
+                  borderRadius: 8,
+                  fontSize: "0.875rem"
+                }} 
+              />
             </label>
-            <label>Width
-              <input value={imgWidth} onChange={(e) => setImgWidth(e.target.value)} placeholder="e.g., 600px or 100%" style={{ marginLeft: 4, padding: 4, border: "1px solid var(--color-border)", borderRadius: 4 }} />
+            
+            <label style={{ display: "block" }}>
+              <span style={{ 
+                display: "block", 
+                marginBottom: "0.25rem", 
+                fontSize: "0.875rem",
+                fontWeight: 500,
+                color: "#374151"
+              }}>Width</span>
+              <input 
+                value={imgWidth} 
+                onChange={(e) => setImgWidth(e.target.value)} 
+                placeholder="e.g., 600px or 100%" 
+                style={{ 
+                  width: "100%",
+                  padding: "0.5rem", 
+                  border: "1px solid #d1d5db", 
+                  borderRadius: 8,
+                  fontSize: "0.875rem"
+                }} 
+              />
             </label>
-            <label>Align
-              <select value={imgAlign} onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setImgAlign(e.target.value as "left" | "center" | "right")} style={{ marginLeft: 4, padding: 4, border: "1px solid var(--color-border)", borderRadius: 4 }}>
-                <option value="left">left</option>
-                <option value="center">center</option>
-                <option value="right">right</option>
+            
+            <label style={{ display: "block" }}>
+              <span style={{ 
+                display: "block", 
+                marginBottom: "0.25rem", 
+                fontSize: "0.875rem",
+                fontWeight: 500,
+                color: "#374151"
+              }}>Alignment</span>
+              <select 
+                value={imgAlign} 
+                onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setImgAlign(e.target.value as "left" | "center" | "right")} 
+                style={{ 
+                  width: "100%",
+                  padding: "0.5rem", 
+                  border: "1px solid #d1d5db", 
+                  borderRadius: 8,
+                  fontSize: "0.875rem",
+                  background: "#fff"
+                }}
+              >
+                <option value="left">← Left</option>
+                <option value="center">↔ Center</option>
+                <option value="right">→ Right</option>
               </select>
             </label>
-            <label>Caption
-              <input value={imgCaption} onChange={(e) => setImgCaption(e.target.value)} style={{ marginLeft: 4, padding: 4, border: "1px solid var(--color-border)", borderRadius: 4, minWidth: 240 }} />
+            
+            <label style={{ display: "block", gridColumn: "span 2" }}>
+              <span style={{ 
+                display: "block", 
+                marginBottom: "0.25rem", 
+                fontSize: "0.875rem",
+                fontWeight: 500,
+                color: "#374151"
+              }}>Caption</span>
+              <input 
+                value={imgCaption} 
+                onChange={(e) => setImgCaption(e.target.value)} 
+                placeholder="Add a caption for this image"
+                style={{ 
+                  width: "100%",
+                  padding: "0.5rem", 
+                  border: "1px solid #d1d5db", 
+                  borderRadius: 8,
+                  fontSize: "0.875rem"
+                }} 
+              />
             </label>
-            <button type="button" onClick={() => {
-              // Apply
-              const styleParts: string[] = [];
-              if (imgWidth) styleParts.push(`width:${imgWidth}`);
-              if (imgAlign === 'center') { styleParts.push('display:block','margin-left:auto','margin-right:auto'); }
-              else if (imgAlign === 'right') { styleParts.push('float:right','margin:0 0 1rem 1rem'); }
-              else if (imgAlign === 'left') { styleParts.push('float:left','margin:0 1rem 1rem 0'); }
-              const style = styleParts.join(';');
-              const selTo = editor ? ((editor.state as import('@tiptap/pm/state').EditorState).selection?.to ?? null) : null;
-              editor?.chain().focus().updateAttributes('image', { alt: imgAlt, style }).run();
-              if (imgCaption.trim() && editor) {
-                const esc = (s: string) => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-                const cap = esc(imgCaption.trim());
-                if (typeof selTo === 'number') editor.chain().focus().setTextSelection(selTo).insertContent(`<p class=\"image-caption\">${cap}</p>`).run();
-                else editor.chain().focus().insertContent(`<p class=\"image-caption\">${cap}</p>`).run();
-              }
-              setShowImagePanel(false);
-              setImgCaption("");
-            }} style={{ padding: "6px 10px", border: "1px solid var(--color-border)", borderRadius: 4 }}>Apply</button>
+            
+            <button 
+              type="button" 
+              onClick={() => {
+                const styleParts: string[] = [];
+                if (imgWidth) styleParts.push(`width:${imgWidth}`);
+                if (imgAlign === 'center') { 
+                  styleParts.push('display:block','margin-left:auto','margin-right:auto'); 
+                } else if (imgAlign === 'right') { 
+                  styleParts.push('float:right','margin:0 0 1rem 1rem'); 
+                } else if (imgAlign === 'left') { 
+                  styleParts.push('float:left','margin:0 1rem 1rem 0'); 
+                }
+                const style = styleParts.join(';');
+                const selTo = editor ? ((editor.state as import('@tiptap/pm/state').EditorState).selection?.to ?? null) : null;
+                editor?.chain().focus().updateAttributes('image', { alt: imgAlt, style }).run();
+                if (imgCaption.trim() && editor) {
+                  const esc = (s: string) => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+                  const cap = esc(imgCaption.trim());
+                  if (typeof selTo === 'number') {
+                    editor.chain().focus().setTextSelection(selTo).insertContent(`<p class=\"image-caption\">${cap}</p>`).run();
+                  } else {
+                    editor.chain().focus().insertContent(`<p class=\"image-caption\">${cap}</p>`).run();
+                  }
+                }
+                setShowImagePanel(false);
+                setImgCaption("");
+              }} 
+              style={{ 
+                gridColumn: "span 1",
+                padding: "0.5rem 1rem", 
+                background: "linear-gradient(135deg, #8aa5d6 0%, #6b8cc9 100%)",
+                color: "#fff",
+                border: "none", 
+                borderRadius: 8,
+                fontWeight: 600,
+                cursor: "pointer",
+                transition: "all 0.2s ease"
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(-1px)";
+                e.currentTarget.style.boxShadow = "0 4px 6px rgba(138, 165, 214, 0.4)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow = "none";
+              }}
+            >
+              ✓ Apply Settings
+            </button>
           </div>
         </div>
       )}
 
-      <div
-        className="editor-surface"
-        onPaste={async (e) => {
-          if (!e.clipboardData) return;
-          const files = Array.from(e.clipboardData.files).filter(f => f.type.startsWith('image/'));
-          if (files.length === 0) return;
-          e.preventDefault();
-          for (const f of files) {
-            await uploadImageFile(f);
-          }
-        }}
-        onDragOver={(e) => {
-          if (e.dataTransfer && Array.from(e.dataTransfer.types).includes('Files')) {
-            e.preventDefault();
-          }
-        }}
-        onDrop={async (e) => {
-          if (!e.dataTransfer) return;
-          const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
-          if (files.length === 0) return;
-          e.preventDefault();
-          for (const f of files) {
-            await uploadImageFile(f);
-          }
-        }}
-        style={{
-          border: "1px solid var(--color-border)",
-          borderRadius: 6,
-          padding: "0.75rem",
-          background: "#fff",
-        }}
-      >
-        {editor && <EditorContent editor={editor} />}
+      {/* Editor or Preview Content */}
+      <div style={{
+        background: "#fff",
+        borderRadius: 16,
+        overflow: "hidden",
+        boxShadow: "0 4px 6px rgba(0, 0, 0, 0.07)",
+        marginBottom: "1.5rem"
+      }}>
+        {activeTab === "write" ? (
+          <div
+            className="editor-surface"
+            onPaste={async (e) => {
+              if (!e.clipboardData) return;
+              const files = Array.from(e.clipboardData.files).filter(f => f.type.startsWith('image/'));
+              if (files.length === 0) return;
+              e.preventDefault();
+              for (const f of files) {
+                await uploadImageFile(f);
+              }
+            }}
+            onDragOver={(e) => {
+              if (e.dataTransfer && Array.from(e.dataTransfer.types).includes('Files')) {
+                e.preventDefault();
+                e.currentTarget.style.background = "#f4f7fc";
+                e.currentTarget.style.borderColor = "#8aa5d6";
+              }
+            }}
+            onDragLeave={(e) => {
+              e.currentTarget.style.background = "#fff";
+              e.currentTarget.style.borderColor = "#e5e7eb";
+            }}
+            onDrop={async (e) => {
+              if (!e.dataTransfer) return;
+              const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
+              if (files.length === 0) return;
+              e.preventDefault();
+              e.currentTarget.style.background = "#fff";
+              e.currentTarget.style.borderColor = "#e5e7eb";
+              for (const f of files) {
+                await uploadImageFile(f);
+              }
+            }}
+            style={{
+              border: "2px dashed #e5e7eb",
+              borderRadius: 12,
+              padding: "1.5rem",
+              background: "#fff",
+              minHeight: "400px",
+              margin: "1rem",
+              transition: "all 0.3s ease",
+              position: "relative"
+            }}
+          >
+            {(!editor || !editor.getText()) && (
+              <div style={{
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                textAlign: "center",
+                color: "#9ca3af",
+                pointerEvents: "none"
+              }}>
+                <div style={{ fontSize: "3rem", marginBottom: "0.5rem" }}>📝</div>
+                <div style={{ fontSize: "1.125rem", fontWeight: 500 }}>Start writing your post...</div>
+                <div style={{ fontSize: "0.875rem", marginTop: "0.5rem" }}>You can drag & drop images here</div>
+              </div>
+            )}
+            {editor && <EditorContent editor={editor} />}
+          </div>
+        ) : (
+          <div
+            style={{
+              background: "linear-gradient(180deg, #f9fafb 0%, #fff 100%)",
+              minHeight: "500px",
+              position: "relative",
+              overflow: "auto"
+            }}
+          >
+            <PreviewPane 
+              title={title} 
+              html={editor?.getHTML() || ""} 
+              slug={computedSlug}
+              isPublished={false}
+            />
+          </div>
+        )}
       </div>
 
-      <div style={{ marginTop: "1rem", display: "flex", gap: "0.5rem", alignItems: "center" }}>
-        <button
-          onClick={onPublish}
-          disabled={saving || !title}
-          style={{
-            background: "var(--color-accent)",
-            color: "#fff",
-            border: 0,
-            borderRadius: 4,
-            padding: "0.5rem 0.75rem",
-            cursor: saving || !title ? "not-allowed" : "pointer",
-          }}
-        >
-          {saving ? (mode === "edit" ? "Updating…" : "Publishing…") : (mode === "edit" ? "Update & Publish" : "Publish")}
-        </button>
-        <button
-          onClick={onSaveDraft}
-          disabled={!title}
-          style={{
-            background: "transparent",
-            color: "var(--color-text)",
-            border: "1px solid var(--color-border)",
-            borderRadius: 4,
-            padding: "0.5rem 0.75rem",
-          }}
-        >
-          Save draft
-        </button>
-        <span style={{ color: "var(--color-muted)", fontSize: 12 }}>
-          {isAutoSaving ? "Autosaving…" : lastSavedAt ? `Draft saved at ${new Date(lastSavedAt).toLocaleTimeString()}` : ""}
-        </span>
-        {success && <span style={{ color: "#16a34a" }}>{success}</span>}
-        {error && <span style={{ color: "#b91c1c" }}>{error}</span>}
+      {/* Action Buttons */}
+      <div style={{
+        background: "linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%)",
+        borderRadius: 16,
+        padding: "1.5rem",
+        boxShadow: "inset 0 2px 4px rgba(0, 0, 0, 0.06)"
+      }}>
+        <div style={{ 
+          display: "flex", 
+          gap: "1rem", 
+          alignItems: "center",
+          flexWrap: "wrap"
+        }}>
+          <button
+            onClick={onPublish}
+            disabled={saving || !title}
+            style={{
+              background: saving || !title 
+                ? "#e5e7eb" 
+                : "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+              color: saving || !title ? "#9ca3af" : "#fff",
+              border: "none",
+              borderRadius: 12,
+              padding: "0.875rem 1.75rem",
+              fontSize: "1rem",
+              fontWeight: 600,
+              cursor: saving || !title ? "not-allowed" : "pointer",
+              transition: "all 0.3s ease",
+              boxShadow: saving || !title 
+                ? "none" 
+                : "0 4px 6px rgba(16, 185, 129, 0.25)",
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem"
+            }}
+            onMouseEnter={(e) => {
+              if (!saving && title) {
+                e.currentTarget.style.transform = "translateY(-2px)";
+                e.currentTarget.style.boxShadow = "0 6px 8px rgba(16, 185, 129, 0.3)";
+              }
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = "translateY(0)";
+              if (!saving && title) {
+                e.currentTarget.style.boxShadow = "0 4px 6px rgba(16, 185, 129, 0.25)";
+              }
+            }}
+          >
+            <span>{saving ? "⏳" : "🚀"}</span>
+            {saving ? (mode === "edit" ? "Updating…" : "Publishing…") : (mode === "edit" ? "Update & Publish" : "Publish Post")}
+          </button>
+          
+          <button
+            onClick={onSaveDraft}
+            disabled={!title || isAutoSaving}
+            style={{
+              background: "#fff",
+              color: "#374151",
+              border: "2px solid #e5e7eb",
+              borderRadius: 12,
+              padding: "0.75rem 1.5rem",
+              fontSize: "0.875rem",
+              fontWeight: 500,
+              cursor: !title || isAutoSaving ? "not-allowed" : "pointer",
+              transition: "all 0.2s ease",
+              opacity: !title || isAutoSaving ? 0.5 : 1,
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem"
+            }}
+            onMouseEnter={(e) => {
+              if (title && !isAutoSaving) {
+                e.currentTarget.style.borderColor = "#8aa5d6";
+                e.currentTarget.style.background = "#f4f7fc";
+              }
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.borderColor = "#e5e7eb";
+              e.currentTarget.style.background = "#fff";
+            }}
+          >
+            <span>{isAutoSaving ? "⏳" : "💾"}</span>
+            {isAutoSaving ? "Saving…" : "Save as Draft"}
+          </button>
+          
+          {/* Status Messages */}
+          <div style={{ 
+            flex: 1,
+            display: "flex",
+            alignItems: "center",
+            gap: "1rem",
+            justifyContent: "flex-end",
+            minWidth: "200px"
+          }}>
+            {lastSavedAt && !error && !success && (
+              <span style={{ 
+                color: "#6b7280", 
+                fontSize: "0.875rem",
+                display: "flex",
+                alignItems: "center",
+                gap: "0.25rem"
+              }}>
+                <span style={{ color: "#10b981" }}>✓</span>
+                Saved {new Date(lastSavedAt).toLocaleTimeString()}
+              </span>
+            )}
+            
+            {success && (
+              <span style={{ 
+                color: "#fff",
+                background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+                padding: "0.5rem 1rem",
+                borderRadius: 8,
+                fontSize: "0.875rem",
+                fontWeight: 500,
+                display: "flex",
+                alignItems: "center",
+                gap: "0.5rem",
+                animation: "fadeIn 0.3s ease"
+              }}>
+                <span>🎉</span>
+                {success}
+              </span>
+            )}
+            
+            {error && (
+              <span style={{ 
+                color: "#fff",
+                background: "linear-gradient(135deg, #ef4444 0%, #dc2626 100%)",
+                padding: "0.5rem 1rem",
+                borderRadius: 8,
+                fontSize: "0.875rem",
+                fontWeight: 500,
+                display: "flex",
+                alignItems: "center",
+                gap: "0.5rem"
+              }}>
+                <span>⚠️</span>
+                {error}
+              </span>
+            )}
+          </div>
+        </div>
       </div>
     </section>
   );
